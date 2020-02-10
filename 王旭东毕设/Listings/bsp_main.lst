@@ -1,0 +1,200 @@
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_MAIN
+OBJECT MODULE PLACED IN ..\Objects\bsp_main.obj
+COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\user\bsp_main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc) DEBU
+                    -G OBJECTEXTEND PRINT(..\Listings\bsp_main.lst) OBJECT(..\Objects\bsp_main.obj)
+
+line level    source
+
+   1          #include "inc.h"
+   2          
+   3          typedef struct _Dishe
+   4          {
+   5                  char* DisheName;
+   6                  float price;
+   7          }Dishes;
+   8          
+   9          typedef struct _info
+  10          {
+  11                  float weight;
+  12                  float price;
+  13                  float money;
+  14                  uint8_t Num;
+  15          }Info;
+  16          
+  17          xdata Dishes temp[] ={
+  18          {"qingcai",2.2},
+  19          {"dabaicai",2.8},
+  20          {"xiguan",4.9},
+  21          {"xiangjiao",71.3},
+  22          {"xihongshi",88.2},
+  23          {"niunan",99},
+  24          {"jinju",19},
+  25          {"niunan",22},
+  26          {"qiezi",33},
+  27          {"huasheng",55},
+  28          {"niunai",88},};
+  29          
+  30          Info Dishes_Info = {0,2.2,0,0};
+  31          
+  32          
+  33          void Delay200ms()               //@11.0592MHz
+  34          {
+  35   1              unsigned char i, j, k;
+  36   1      
+  37   1              _nop_();
+  38   1              i = 2;
+  39   1              j = 103;
+  40   1              k = 147;
+  41   1              do
+  42   1              {
+  43   2                      do
+  44   2                      {
+  45   3                              while (--k);
+  46   3                      } while (--j);
+  47   2              } while (--i);
+  48   1      }
+  49          
+  50          
+  51          void lcd_display(void);
+  52          char xdata str[35] = 0;
+  53          void main(void)
+  54          {
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 2   
+
+  55   1              char key = 0;
+  56   1              uint8_t flag = 0;
+  57   1              
+  58   1              lcd_display();
+  59   1              Timer0Init();
+  60   1              UartInit();
+  61   1              while(1)
+  62   1              {
+  63   2                      key = Get_KeyPad();
+  64   2                      Dishes_Info.weight = GetTcl1543();
+  65   2                      sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight * 5 /4095,key);
+  66   2                      Send_String(str);
+  67   2                      if(flag != 2)
+  68   2                      {
+  69   3                              sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight * 5 /4095,Dishes_Info.price);
+  70   3                              LcdShowStr(0x80,str);
+  71   3                              Dishes_Info.money = Dishes_Info.weight * 5 /4095* Dishes_Info.price;
+  72   3                              sprintf(str, "MONEY: %03.1f No:%d", Dishes_Info.money, (int)Dishes_Info.Num);
+  73   3                              LcdShowStr(0x80 + 0x40,str);
+  74   3                              switch(key)
+  75   3                              {
+  76   4                                      case 'S': ++ flag ; flag %= 2; uClear_KeyPad();break;
+  77   4                                      case 0xff:break;
+  78   4                                      case '0':
+  79   4                                      case '1':
+  80   4                                      case '2':
+  81   4                                      case '3':
+  82   4                                      case '4':
+  83   4                                      case '5':
+  84   4                                      case '6':
+  85   4                                      case '7':
+  86   4                                      case '8':
+  87   4                                      case '9': if(flag == 1)
+  88   4                                                              {
+  89   5                                                                      flag = 2;
+  90   5                                                                      LcdShowStr(0x80,"                ");
+  91   5                                                                      LcdShowStr(0x80+ 0x40,"                ");
+  92   5                                                              }break;
+  93   4                                      default:break;
+  94   4                              }                       
+  95   3                      }
+  96   2                      if(flag == 2)
+  97   2                      {
+  98   3                              if(key == 'S')
+  99   3                              {
+ 100   4                                      flag = 0;
+ 101   4                                      uClear_KeyPad();
+ 102   4                              }
+ 103   3                              else
+ 104   3                              {
+ 105   4                              Dishes_Info.price = temp[key-'0'].price;
+ 106   4                              Dishes_Info.Num = key;
+ 107   4                              sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
+ 108   4                              Send_String(str);
+ 109   4                              
+ 110   4                              sprintf(str, "name:%s",temp[key-'0'].DisheName);
+ 111   4                              LcdShowStr(0x80,str);
+ 112   4                              
+ 113   4                              sprintf(str, "price:%2.1f      ",Dishes_Info.price);    
+ 114   4                              LcdShowStr(0x80 + 0x40,str);    
+ 115   4                              }
+ 116   3                              
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 3   
+
+ 117   3                      }
+ 118   2                      
+ 119   2                      Delay200ms();
+ 120   2                      
+ 121   2                      
+ 122   2                      
+ 123   2              }
+ 124   1      }
+ 125          
+ 126          void lcd_display(void)
+ 127          {
+ 128   1              LcdInit();      
+ 129   1              LcdShowStr(0x80,"name: XXX");
+ 130   1              LcdShowStr(0x80 + 0x40,"Electronic scale");
+ 131   1              Delay200ms();
+ 132   1              Delay200ms();
+ 133   1              Delay200ms();
+ 134   1              Delay200ms();
+ 135   1              LcdShowStr(0x80,"WE:0.000 PR:00.0");
+ 136   1              LcdShowStr(0x80 + 0x40,"MONEY:000.0 No:0");     
+ 137   1      }
+ 138          
+ 139          
+ 140          
+ 141          
+ 142          
+ 143          
+ 144          
+ 145          
+ 146          
+ 147          
+ 148          
+ 149          
+ 150          
+ 151          
+ 152          
+ 153          
+ 154          
+ 155          
+ 156          
+ 157          
+ 158          
+ 159          
+ 160          
+ 161          
+ 162          
+ 163          
+ 164          
+ 165          
+ 166          
+ 167          
+ 168          
+ 169          
+ 170          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    668    ----
+   CONSTANT SIZE    =    260    ----
+   XDATA SIZE       =    112    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     13       2
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 4   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
