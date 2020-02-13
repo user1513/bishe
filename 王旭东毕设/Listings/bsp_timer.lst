@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_TIMER                                                         02/09/2020 22:50:10 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_TIMER                                                         02/13/2020 15:18:46 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_TIMER
@@ -62,7 +62,7 @@ line level    source
   52   1              if(timeout++ == 10)
   53   1              {
   54   2                      timeout = 0;
-C51 COMPILER V9.60.0.0   BSP_TIMER                                                         02/09/2020 22:50:10 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_TIMER                                                         02/13/2020 15:18:46 PAGE 2   
 
   55   2                      uGetKeyPadAction();
   56   2                      read2543(0);

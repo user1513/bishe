@@ -148,7 +148,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>user\BSP_MAIN.C</Filename>
+          <Filename>C:\Users\APTX4\Desktop\毕设\bishe\王旭东毕设\project\user\BSP_MAIN.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -251,8 +251,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>$TC_ROOT$\..\..\Users\APTX4\Desktop\12\user\inc.h</PathWithFileName>
-      <FilenameWithoutPath>..\..\Users\APTX4\Desktop\12\user\inc.h</FilenameWithoutPath>
+      <PathWithFileName>..\user\inc.h</PathWithFileName>
+      <FilenameWithoutPath>inc.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

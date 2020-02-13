@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/13/2020 15:18:50 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_MAIN
@@ -21,7 +21,7 @@ line level    source
   11                  float weight;
   12                  float price;
   13                  float money;
-  14                  uint8_t Num;
+  14                  int Num;
   15          }Info;
   16          
   17          xdata Dishes temp[] ={
@@ -58,99 +58,99 @@ line level    source
   48   1      }
   49          
   50          
-  51          void lcd_display(void);
-  52          char xdata str[35] = 0;
-  53          void main(void)
-  54          {
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 2   
+  51          
+  52          
+  53          void lcd_display(void);
+  54          char xdata str[35] = 0;
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/13/2020 15:18:50 PAGE 2   
 
-  55   1              char key = 0;
-  56   1              uint8_t flag = 0;
-  57   1              
-  58   1              lcd_display();
-  59   1              Timer0Init();
-  60   1              UartInit();
-  61   1              while(1)
-  62   1              {
-  63   2                      key = Get_KeyPad();
-  64   2                      Dishes_Info.weight = GetTcl1543();
-  65   2                      sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight * 5 /4095,key);
-  66   2                      Send_String(str);
-  67   2                      if(flag != 2)
-  68   2                      {
-  69   3                              sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight * 5 /4095,Dishes_Info.price);
-  70   3                              LcdShowStr(0x80,str);
-  71   3                              Dishes_Info.money = Dishes_Info.weight * 5 /4095* Dishes_Info.price;
-  72   3                              sprintf(str, "MONEY: %03.1f No:%d", Dishes_Info.money, (int)Dishes_Info.Num);
-  73   3                              LcdShowStr(0x80 + 0x40,str);
-  74   3                              switch(key)
-  75   3                              {
-  76   4                                      case 'S': ++ flag ; flag %= 2; uClear_KeyPad();break;
-  77   4                                      case 0xff:break;
-  78   4                                      case '0':
-  79   4                                      case '1':
-  80   4                                      case '2':
-  81   4                                      case '3':
-  82   4                                      case '4':
-  83   4                                      case '5':
-  84   4                                      case '6':
-  85   4                                      case '7':
-  86   4                                      case '8':
-  87   4                                      case '9': if(flag == 1)
-  88   4                                                              {
-  89   5                                                                      flag = 2;
-  90   5                                                                      LcdShowStr(0x80,"                ");
-  91   5                                                                      LcdShowStr(0x80+ 0x40,"                ");
-  92   5                                                              }break;
-  93   4                                      default:break;
-  94   4                              }                       
-  95   3                      }
-  96   2                      if(flag == 2)
-  97   2                      {
-  98   3                              if(key == 'S')
-  99   3                              {
- 100   4                                      flag = 0;
- 101   4                                      uClear_KeyPad();
- 102   4                              }
- 103   3                              else
- 104   3                              {
- 105   4                              Dishes_Info.price = temp[key-'0'].price;
- 106   4                              Dishes_Info.Num = key;
- 107   4                              sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
- 108   4                              Send_String(str);
- 109   4                              
- 110   4                              sprintf(str, "name:%s",temp[key-'0'].DisheName);
- 111   4                              LcdShowStr(0x80,str);
- 112   4                              
- 113   4                              sprintf(str, "price:%2.1f      ",Dishes_Info.price);    
- 114   4                              LcdShowStr(0x80 + 0x40,str);    
- 115   4                              }
- 116   3                              
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 3   
+  55          void main(void)
+  56          {
+  57   1              char key = 0;
+  58   1              uint8_t flag = 0;
+  59   1              
+  60   1              lcd_display();
+  61   1              Timer0Init();
+  62   1              UartInit();
+  63   1              while(1)
+  64   1              {
+  65   2                      key = Get_KeyPad();
+  66   2                      Dishes_Info.weight = GetTcl1543();
+  67   2                      sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight * 5 /4095,key);
+  68   2                      Send_String(str);
+  69   2                      if(flag != 2)
+  70   2                      {
+  71   3                              sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight * 5 /4095,Dishes_Info.price);
+  72   3                              LcdShowStr(0x80,str);
+  73   3                              Dishes_Info.money = Dishes_Info.weight * 5 /4095* Dishes_Info.price;
+  74   3                              sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
+  75   3                              LcdShowStr(0x80 + 0x40,str);
+  76   3                              switch(key)
+  77   3                              {
+  78   4                                      case 'S': ++ flag ; flag %= 2; uClear_KeyPad();break;
+  79   4                                      case 0xff:break;
+  80   4                                      case '0':
+  81   4                                      case '1':
+  82   4                                      case '2':
+  83   4                                      case '3':
+  84   4                                      case '4':
+  85   4                                      case '5':
+  86   4                                      case '6':
+  87   4                                      case '7':
+  88   4                                      case '8':
+  89   4                                      case '9': if(flag == 1)
+  90   4                                                              {
+  91   5                                                                      flag = 2;
+  92   5                                                                      LcdShowStr(0x80,"                ");
+  93   5                                                                      LcdShowStr(0x80+ 0x40,"                ");
+  94   5                                                              }break;
+  95   4                                      default:break;
+  96   4                              }                       
+  97   3                      }
+  98   2                      if(flag == 2)
+  99   2                      {
+ 100   3                              if(key == 'S')
+ 101   3                              {
+ 102   4                                      flag = 0;
+ 103   4                                      uClear_KeyPad();
+ 104   4                              }
+ 105   3                              else
+ 106   3                              {
+ 107   4                                      Dishes_Info.price = temp[key-'0'].price;
+ 108   4                                      Dishes_Info.Num = key - '0';
+ 109   4                                      sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
+ 110   4                                      Send_String(str);
+ 111   4                                      
+ 112   4                                      sprintf(str, "name:%s",temp[key-'0'].DisheName);
+ 113   4                                      LcdShowStr(0x80,str);
+ 114   4                                      
+ 115   4                                      sprintf(str, "price:%2.1f      ",Dishes_Info.price);    
+ 116   4                                      LcdShowStr(0x80 + 0x40,str);    
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/13/2020 15:18:50 PAGE 3   
 
- 117   3                      }
- 118   2                      
- 119   2                      Delay200ms();
+ 117   4                              }
+ 118   3                              
+ 119   3                      }
  120   2                      
- 121   2                      
+ 121   2                      Delay200ms();
  122   2                      
- 123   2              }
- 124   1      }
- 125          
- 126          void lcd_display(void)
- 127          {
- 128   1              LcdInit();      
- 129   1              LcdShowStr(0x80,"name: XXX");
- 130   1              LcdShowStr(0x80 + 0x40,"Electronic scale");
- 131   1              Delay200ms();
- 132   1              Delay200ms();
+ 123   2                      
+ 124   2                      
+ 125   2              }
+ 126   1      }
+ 127          
+ 128          void lcd_display(void)
+ 129          {
+ 130   1              LcdInit();      
+ 131   1              LcdShowStr(0x80,"name: XXX");
+ 132   1              LcdShowStr(0x80 + 0x40,"Electronic scale");
  133   1              Delay200ms();
  134   1              Delay200ms();
- 135   1              LcdShowStr(0x80,"WE:0.000 PR:00.0");
- 136   1              LcdShowStr(0x80 + 0x40,"MONEY:000.0 No:0");     
- 137   1      }
- 138          
- 139          
+ 135   1              Delay200ms();
+ 136   1              Delay200ms();
+ 137   1              LcdShowStr(0x80,"WE:0.000 PR:00.0");
+ 138   1              LcdShowStr(0x80 + 0x40,"MONEY:000.0 No:0");     
+ 139   1      }
  140          
  141          
  142          
@@ -182,16 +182,18 @@ line level    source
  168          
  169          
  170          
+ 171          
+ 172          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    668    ----
-   CONSTANT SIZE    =    260    ----
+   CODE SIZE        =    677    ----
+   CONSTANT SIZE    =    258    ----
    XDATA SIZE       =    112    ----
-   PDATA SIZE       =   ----    ----
-   DATA SIZE        =     13       2
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/09/2020 22:50:43 PAGE 4   
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          02/13/2020 15:18:50 PAGE 4   
 
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

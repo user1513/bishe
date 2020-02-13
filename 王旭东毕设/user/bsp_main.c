@@ -11,7 +11,7 @@ typedef struct _info
 	float weight;
 	float price;
 	float money;
-	uint8_t Num;
+	int Num;
 }Info;
 
 xdata Dishes temp[] ={
@@ -48,6 +48,8 @@ void Delay200ms()		//@11.0592MHz
 }
 
 
+
+
 void lcd_display(void);
 char xdata str[35] = 0;
 void main(void)
@@ -69,7 +71,7 @@ void main(void)
 			sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight * 5 /4095,Dishes_Info.price);
 			LcdShowStr(0x80,str);
 			Dishes_Info.money = Dishes_Info.weight * 5 /4095* Dishes_Info.price;
-			sprintf(str, "MONEY: %03.1f No:%d", Dishes_Info.money, (int)Dishes_Info.Num);
+			sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
 			LcdShowStr(0x80 + 0x40,str);
 			switch(key)
 			{
@@ -102,16 +104,16 @@ void main(void)
 			}
 			else
 			{
-			Dishes_Info.price = temp[key-'0'].price;
-			Dishes_Info.Num = key;
-			sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
-			Send_String(str);
-			
-			sprintf(str, "name:%s",temp[key-'0'].DisheName);
-			LcdShowStr(0x80,str);
-			
-			sprintf(str, "price:%2.1f      ",Dishes_Info.price);	
-			LcdShowStr(0x80 + 0x40,str);	
+				Dishes_Info.price = temp[key-'0'].price;
+				Dishes_Info.Num = key - '0';
+				sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
+				Send_String(str);
+				
+				sprintf(str, "name:%s",temp[key-'0'].DisheName);
+				LcdShowStr(0x80,str);
+				
+				sprintf(str, "price:%2.1f      ",Dishes_Info.price);	
+				LcdShowStr(0x80 + 0x40,str);	
 			}
 			
 		}

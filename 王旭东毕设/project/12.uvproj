@@ -382,9 +382,9 @@
               <FilePath>..\user\bsp_main.c</FilePath>
             </File>
             <File>
-              <FileName>..\..\Users\APTX4\Desktop\12\user\inc.h</FileName>
+              <FileName>inc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>$TC_ROOT$\..\..\Users\APTX4\Desktop\12\user\inc.h</FilePath>
+              <FilePath>..\user\inc.h</FilePath>
             </File>
           </Files>
         </Group>
