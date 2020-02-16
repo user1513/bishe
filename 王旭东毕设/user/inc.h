@@ -17,5 +17,7 @@ typedef unsigned char uchar;
 #include "bsp_keypad.h"
 #include "bsp_lcd.h"
 #include "bsp_timer.h"
+#include "bsp_405x.h"
+
 #endif
 

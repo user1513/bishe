@@ -53,7 +53,7 @@ void tim0() interrupt 1
 	{
 		timeout = 0;
 		uGetKeyPadAction();
-		read2543(0);
+		Electronic_scale_scan(1,(float)read2543(0) / 819.0 );
 	}
 	
 }

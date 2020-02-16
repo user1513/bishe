@@ -1,0 +1,139 @@
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_ES_LOGIC
+OBJECT MODULE PLACED IN ..\Objects\bsp_ES_Logic.obj
+COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_ES_Logic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\in
+                    -c) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_ES_Logic.lst) OBJECT(..\Objects\bsp_ES_Logic.obj)
+
+line level    source
+
+   1          #include "bsp_405x.h"
+   2          
+   3          static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw);
+   4          
+   5          float ES_Val = 0 ;
+   6          float Get_ES_Val(void)
+   7          {
+   8   1              return(ES_Val);
+   9   1      }
+  10          uint8_t laststate = 1;
+  11          char xdata xstr[10] = 0;
+  12          uint8_t Electronic_scale_scan(uint8_t _scan,float val)
+  13          {
+  14   1              
+  15   1              static uint8_t State_Machine = 1;
+  16   1              uint8_t temp = 0;
+  17   1              switch(State_Machine)
+  18   1              {
+  19   2                      case 1:
+  20   2                              switch(_scan)
+  21   2                              {
+  22   3                                      case 1:INPUT_ONE_ENALBE                 break;
+  23   3                                      case 2:INPUT_TWO_ENALBE                 break;
+  24   3                                      case 3:INPUT_THREE_ENALBE               break;
+  25   3                                      case 4:INPUT_FOUR_ENALBE                break;
+  26   3                                      case 5:INPUT_CLEAR_ENALBE               break;
+  27   3                                      default :INPUT_CLEAR_ENALBE     break;
+  28   3                              }
+  29   2                              State_Machine++;
+  30   2                      break;
+  31   2                      case 2:
+  32   2                              laststate = Electronic_Auto_Mode(val, 1);
+  33   2                              switch(laststate)
+  34   2                                      {
+  35   3                                              case 1:OP_1_ENALBE              break;
+  36   3                                              case 2:OP_5_ENALBE              break;
+  37   3                                              case 3:OP_25_ENALBE     break;
+  38   3                                              default:break;
+  39   3                                      }
+  40   2      //                      State_Machine++;        
+  41   2                                      State_Machine = 4;
+  42   2      //                              sprintf(xstr, "ls10:%d",(int)laststate);
+  43   2      //                              Send_String(xstr);
+  44   2                              break;
+  45   2                              /*
+  46   2                              temp = Electronic_Auto_Mode(val, laststate);
+  47   2                              if(temp != laststate)
+  48   2                              {
+  49   2                                      laststate = temp;
+  50   2                                      switch(laststate)
+  51   2                                      {
+  52   2                                              case 1:OP_1_ENALBE              break;
+  53   2                                              case 2:OP_5_ENALBE              break;
+  54   2                                              case 3:OP_25_ENALBE     break;
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 2   
+
+  55   2                                              default:break;
+  56   2                                      }
+  57   2                                      State_Machine++;
+  58   2                                      break;
+  59   2                              }               
+  60   2                              */      
+  61   2      //              case 3: State_Machine++;break;  
+  62   2                      case 4: State_Machine++;break;                  
+  63   2                      case 5:
+  64   2      //                      if(Electronic_Auto_Mode(val,laststate) != laststate)
+  65   2      //                              State_Machine = 2;
+  66   2      //                      else 
+  67   2                              {
+  68   3                                      State_Machine = 1;
+  69   3      //                              sprintf(xstr, "ls20:%d",(int)laststate);
+  70   3      //                              Send_String(xstr);
+  71   3                                      switch(laststate)
+  72   3                                      {
+  73   4                                              case 1: val /= 1.0;             break;
+  74   4                                              case 2: val /= 4.5;     break;
+  75   4                                              case 3:  val/= 25.0;    break;
+  76   4                                              default:val = 0;break;
+  77   4                                      }
+  78   3                                      ES_Val = val;
+  79   3                                      OP_1_ENALBE
+  80   3                              }
+  81   2                                      
+  82   2                      break;
+  83   2              }
+  84   1              return 0;
+  85   1      }
+  86          
+  87          static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
+  88          {
+  89   1              uint8_t state = 0;
+  90   1              switch(dw)
+  91   1              {
+  92   2                      case 1: if(val >= 1)
+  93   2                                              state = 1;
+  94   2                                      else if(val < 1 && val >= 0.2)
+  95   2                                              state = 2;
+  96   2                                      else if(val > 0)
+  97   2                                              state = 3;
+  98   2                      break;
+  99   2                      case 2:
+ 100   2                                      if(val >= 1)
+ 101   2                                              state = 2;
+ 102   2                                      else 
+ 103   2                                              state = 3;
+ 104   2                      break;
+ 105   2                      case 3:
+ 106   2                              if(val < 5)
+ 107   2                                              state = 3;
+ 108   2                              break;
+ 109   2              }
+ 110   1              return state;
+ 111   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    422    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 3   
+
+   XDATA SIZE       =     10    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

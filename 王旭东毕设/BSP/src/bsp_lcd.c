@@ -14,8 +14,8 @@ void Delay1ms(uchar z)		//@11.0592MHz
 	for(k=0;k<z;k++)
 	{
 		_nop_();
-		i = 11;
-		j = 190;
+		i = 2;
+		j = 199;
 		do
 		{
 			while (--j);
@@ -27,8 +27,13 @@ void Delay100us()		//@11.0592MHz
 {
 	unsigned char i;
 
-	_nop_();
-	i = 43;
+//	_nop_();
+//	i = 43;
+//	while (--i);
+	
+
+	_nop_();//实际延时50us//仿真时候用
+	i = 20;
 	while (--i);
 }
 
@@ -47,8 +52,8 @@ void LcdWriteCom(uchar com)	  //写入命令
 	LCD1602_RW = 0;	   //选择写入
 	
 	LCD1602_DATAPINS = com;     //放入命令
-	Delay1ms(1);		//等待数据稳定
-
+	//Delay1ms(1);		//等待数据稳定
+	Delay100us();
 	LCD1602_E = 1;	          //写入时序
 	Delay100us();	  //保持时间
 	LCD1602_E = 0;
@@ -61,18 +66,20 @@ void LcdWriteCom(uchar com)	  //写入命令
 	LCD1602_RW = 0;	 //选择写入
 
 	LCD1602_DATAPINS = com;	//由于4位的接线是接到P0口的高四位，所以传送高四位不用改
-	Delay1ms(1);
-
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 1;	 //写入时序
-	Delay1ms(1);
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 0;
 
 //	Delay1ms(1);
 	LCD1602_DATAPINS = com << 4; //发送低四位
-	Delay1ms(1);
-
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 1;	 //写入时序
-	Delay1ms(1);
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 0;
 }
 #endif
@@ -90,8 +97,8 @@ void LcdWriteData(uchar dat)			//写入数据
 	LCD1602_RW = 0;	//选择写入
 
 	LCD1602_DATAPINS = dat; //写入数据
-	Delay1ms(1);
-
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 1;   //写入时序
 	Delay100us();   //保持时间
 	LCD1602_E = 0;
@@ -104,15 +111,16 @@ void LcdWriteData(uchar dat)			//写入数据
 	LCD1602_RW = 0;	  //选择写入
 
 	LCD1602_DATAPINS = dat;	//由于4位的接线是接到P0口的高四位，所以传送高四位不用改
-	Delay1ms(1);
-
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 1;	  //写入时序
-	Delay1ms(1);
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 0;
 
 	LCD1602_DATAPINS = dat << 4; //写入低四位
-	Delay1ms(1);
-
+	//Delay1ms(1);
+	Delay100us();
 	LCD1602_E = 1;	  //写入时序
 	Delay100us();
 	LCD1602_E = 0;

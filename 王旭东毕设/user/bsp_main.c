@@ -9,9 +9,11 @@ typedef struct _Dishe
 typedef struct _info
 {
 	float weight;
+	float Peeled;
 	float price;
 	float money;
-	int Num;
+	char Num;
+	
 }Info;
 
 xdata Dishes temp[] ={
@@ -27,13 +29,17 @@ xdata Dishes temp[] ={
 {"huasheng",55},
 {"niunai",88},};
 
-Info Dishes_Info = {0,2.2,0,0};
+Info Dishes_Info = {0,0,2.2,0,0};
 
+//xdata Info Dishes_Info_[4] = {
+//{0,2.2,0,0},
+//{0,2.2,0,0},
+//{0,2.2,0,0},
+//{0,2.2,0,0},};
 
 void Delay200ms()		//@11.0592MHz
 {
 	unsigned char i, j, k;
-
 	_nop_();
 	i = 2;
 	j = 103;
@@ -49,28 +55,31 @@ void Delay200ms()		//@11.0592MHz
 
 
 
-
 void lcd_display(void);
-char xdata str[35] = 0;
+char xdata str[25] = 0;
 void main(void)
 {
 	char key = 0;
 	uint8_t flag = 0;
-	
 	lcd_display();
 	Timer0Init();
 	UartInit();
 	while(1)
 	{
-		key = Get_KeyPad();
-		Dishes_Info.weight = GetTcl1543();
-		sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight * 5 /4095,key);
+		key = Get_KeyPad() ;
+		Dishes_Info.weight = Get_ES_Val() - Dishes_Info.Peeled;
+		sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight,key);
 		Send_String(str);
+		if(key == 'C' && flag == 0)
+		{
+			Dishes_Info.Peeled = Get_ES_Val();
+			uClear_KeyPad();
+		}
 		if(flag != 2)
 		{
-			sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight * 5 /4095,Dishes_Info.price);
+			sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight,Dishes_Info.price);
 			LcdShowStr(0x80,str);
-			Dishes_Info.money = Dishes_Info.weight * 5 /4095* Dishes_Info.price;
+			Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
 			sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
 			LcdShowStr(0x80 + 0x40,str);
 			switch(key)
@@ -86,7 +95,9 @@ void main(void)
 				case '6':
 				case '7':
 				case '8':
-				case '9': if(flag == 1)
+				case '9':
+				case 'C':
+							if(flag == 1)
 							{
 								flag = 2;
 								LcdShowStr(0x80,"                ");
@@ -102,34 +113,45 @@ void main(void)
 				flag = 0;
 				uClear_KeyPad();
 			}
-			else
+			else if(key != 'C')
 			{
 				Dishes_Info.price = temp[key-'0'].price;
 				Dishes_Info.Num = key - '0';
-				sprintf(str, "菜名:%s, 单价:%f\n",temp[key-'0'].DisheName, Dishes_Info.price);
+				sprintf(str, "菜名:%s, 单价:%2.1f\n",temp[key-'0'].DisheName, Dishes_Info.price);
 				Send_String(str);
 				
-				sprintf(str, "name:%s",temp[key-'0'].DisheName);
+				sprintf(str, " name:%s",temp[key-'0'].DisheName);
 				LcdShowStr(0x80,str);
 				
 				sprintf(str, "price:%2.1f      ",Dishes_Info.price);	
+				LcdShowStr(0x80 + 0x40,str);	
+			}
+			else
+			{
+				sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
+				Send_String(str);
+				LcdShowStr(0x80,"  name:Peeled  ");
+				
+				sprintf(str, "val:%2.3f      ",Dishes_Info.Peeled);	
 				LcdShowStr(0x80 + 0x40,str);	
 			}
 			
 		}
 		
 		Delay200ms();
-		
-		
-		
+
 	}
 }
 
 void lcd_display(void)
 {
 	LcdInit();	
-	LcdShowStr(0x80,"name: XXX");
-	LcdShowStr(0x80 + 0x40,"Electronic scale");
+	LcdShowStr(0x80 ,"   Welcome use  ");
+	LcdShowStr(0x80 + 0x40 ,"Electronic scale");
+	Delay200ms();
+	Delay200ms();
+	LcdShowStr(0x80 ,"  class: b16   ");
+	LcdShowStr(0x80+ 0x40,"   name: XXX    ");
 	Delay200ms();
 	Delay200ms();
 	Delay200ms();
