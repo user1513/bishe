@@ -1,0 +1,272 @@
+C51 COMPILER V9.60.0.0   BSP_SHT11                                                         02/26/2020 22:23:08 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_SHT11
+OBJECT MODULE PLACED IN ..\Objects\bsp_sht11.obj
+COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_sht11.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc) 
+                    -DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_sht11.lst) OBJECT(..\Objects\bsp_sht11.obj)
+
+line level    source
+
+   1          #include "inc.h"
+   2          
+   3          /****************¶¨Òåº¯Êý****************/
+   4          static void s_transstart(void);               //Æô¶¯´«Êäº¯Êý
+   5          static char s_write_byte(unsigned char value);//DHT90Ð´º¯Êý
+   6          static char s_read_byte(unsigned char ack);   //DHT90¶Áº¯Êý
+   7          static char s_measure(unsigned char *p_value, unsigned char *p_checksum, unsigned char mode);//²âÁ¿ÎÂÊª¶Èº
+             -¯Êý
+   8          static void calc_dht90(float *p_humidity ,float *p_temperature);//ÎÂÊª¶È²¹³¥
+   9          
+  10          
+  11          float fHumi = 0,fTemp = 0;
+  12          
+  13          typedef union  
+  14          { unsigned int i;      //¶¨ÒåÁËÁ½¸ö¹²ÓÃÌå
+  15            float f;
+  16          } value;
+  17          
+  18          
+  19          /*--------------------------------------
+  20          ;Ä£¿éÃû³Æ:s_transstart();
+  21          ;¹¦    ÄÜ:Æô¶¯´«Êäº¯Êý
+  22          ;Õ¼ÓÃ×ÊÔ´:--
+  23          ;²ÎÊýËµÃ÷:--
+  24          ;´´½¨ÈÕÆÚ:2008.08.15
+  25          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+  26          ;ÐÞ¸ÄÈÕÆÚ:--
+  27          ;ÐÞ¸ÄËµÃ÷:--
+  28          ;-------------------------------------*/  
+  29          static void s_transstart(void)
+  30          // generates a transmission start  
+  31          //       _____         ________
+  32          // DATA:      |_______|
+  33          //           ___     ___
+  34          // SCK : ___|   |___|   |______
+  35          {   
+  36   1         SHT11_DATA=1; SHT11_SCK=0;                   //Initial state
+  37   1         _nop_();
+  38   1         SHT11_SCK=1;
+  39   1         _nop_();
+  40   1         SHT11_DATA=0;
+  41   1         _nop_();
+  42   1         SHT11_SCK=0;   
+  43   1         _nop_();_nop_();_nop_();
+  44   1         SHT11_SCK=1;
+  45   1         _nop_();
+  46   1         SHT11_DATA=1;        
+  47   1         _nop_();
+  48   1         SHT11_SCK=0;        
+  49   1      }
+  50          
+  51          
+  52          /*--------------------------------------
+  53          ;Ä£¿éÃû³Æ:s_connectionreset();
+C51 COMPILER V9.60.0.0   BSP_SHT11                                                         02/26/2020 22:23:08 PAGE 2   
+
+  54          ;¹¦    ÄÜ:Á¬½Ó¸´Î»º¯Êý
+  55          ;Õ¼ÓÃ×ÊÔ´:--
+  56          ;²ÎÊýËµÃ÷:--
+  57          ;´´½¨ÈÕÆÚ:2008.08.15
+  58          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+  59          ;ÐÞ¸ÄÈÕÆÚ:--
+  60          ;ÐÞ¸ÄËµÃ÷:--
+  61          ;-------------------------------------*/
+  62          void s_connectionreset(void)
+  63          // communication reset: DATA-line=1 and at least 9 SCK cycles followed by transstart
+  64          //       _____________________________________________________         ________
+  65          // DATA:                                                      |_______|
+  66          //          _    _    _    _    _    _    _    _    _        ___     ___
+  67          // SCK : __| |__| |__| |__| |__| |__| |__| |__| |__| |______|   |___|   |______
+  68          {   
+  69   1        unsigned char i;  
+  70   1        SHT11_DATA=1; SHT11_SCK=0;                    //Initial state
+  71   1        for(i=0;i<9;i++)                  //9 SCK cycles
+  72   1        {
+  73   2          SHT11_SCK=1;
+  74   2          SHT11_SCK=0;
+  75   2        }
+  76   1        s_transstart();                   //transmission start
+  77   1      }
+  78          
+  79          
+  80          /*--------------------------------------
+  81          ;Ä£¿éÃû³Æ:s_write_byte();
+  82          ;¹¦    ÄÜ:DHT90Ð´º¯Êý
+  83          ;Õ¼ÓÃ×ÊÔ´:--
+  84          ;²ÎÊýËµÃ÷:--
+  85          ;´´½¨ÈÕÆÚ:2008.08.15
+  86          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+  87          ;ÐÞ¸ÄÈÕÆÚ:--
+  88          ;ÐÞ¸ÄËµÃ÷:--
+  89          ;-------------------------------------*/
+  90          static char s_write_byte(unsigned char value)
+  91          //----------------------------------------------------------------------------------
+  92          // writes a byte on the Sensibus and checks the acknowledge  
+  93          {  
+  94   1        unsigned char i,error=0;   
+  95   1        for (i=0x80;i>0;i/=2)             //shift bit for masking
+  96   1        {  
+  97   2          if (i & value) SHT11_DATA=1;          //masking value with i , write to SENSI-BUS
+  98   2          else SHT11_DATA=0;                        
+  99   2          SHT11_SCK=1;                          //clk for SENSI-BUS
+ 100   2          _nop_();_nop_();_nop_();        //pulswith approx. 3 us     
+ 101   2          SHT11_SCK=0;
+ 102   2        }
+ 103   1        SHT11_DATA=1;                           //release DATA-line
+ 104   1        SHT11_SCK=1;                            //clk #9 for ack  
+ 105   1        error=SHT11_DATA;                       //check ack (DATA will be pulled down by DHT90),DATAÔÚµÚ9¸öÉÏÉýÑ
+             -Ø½«±»DHT90×Ô¶¯ÏÂÀ­ÎªµÍµçÆ½¡£
+ 106   1        _nop_();_nop_();_nop_();
+ 107   1        SHT11_SCK=0;
+ 108   1        SHT11_DATA=1;                           //release DATA-line
+ 109   1        return error;                     //error=1 in case of no acknowledge //·µ»Ø£º0³É¹¦£¬1Ê§°Ü
+ 110   1      }
+ 111          
+ 112          /*--------------------------------------
+ 113          ;Ä£¿éÃû³Æ:s_read_byte();
+ 114          ;¹¦    ÄÜ:DHT11¶Áº¯Êý
+C51 COMPILER V9.60.0.0   BSP_SHT11                                                         02/26/2020 22:23:08 PAGE 3   
+
+ 115          ;Õ¼ÓÃ×ÊÔ´:--
+ 116          ;²ÎÊýËµÃ÷:--
+ 117          ;´´½¨ÈÕÆÚ:2008.08.15
+ 118          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+ 119          ;ÐÞ¸ÄÈÕÆÚ:--
+ 120          ;ÐÞ¸ÄËµÃ÷:--
+ 121          ;-------------------------------------*/
+ 122          static char s_read_byte(unsigned char ack)  
+ 123          // reads a byte form the Sensibus and gives an acknowledge in case of "ack=1"  
+ 124          {  
+ 125   1        unsigned char i,val=0;
+ 126   1        SHT11_DATA=1;                           //release DATA-line
+ 127   1        for (i=0x80;i>0;i/=2)             //shift bit for masking
+ 128   1        { SHT11_SCK=1;                          //clk for SENSI-BUS
+ 129   2          if (SHT11_DATA) val=(val | i);        //read bit   
+ 130   2              _nop_();_nop_();_nop_();        //pulswith approx. 3 us
+ 131   2          SHT11_SCK=0;              
+ 132   2        }
+ 133   1        if(ack==1)SHT11_DATA=0;                 //in case of "ack==1" pull down DATA-Line
+ 134   1        else SHT11_DATA=1;                      //Èç¹ûÊÇÐ£Ñé(ack==0)£¬¶ÁÈ¡Íêºó½áÊøÍ¨Ñ¶
+ 135   1        _nop_();_nop_();_nop_();          //pulswith approx. 3 us
+ 136   1        SHT11_SCK=1;                            //clk #9 for ack
+ 137   1        _nop_();_nop_();_nop_();          //pulswith approx. 3 us  
+ 138   1        SHT11_SCK=0;                 
+ 139   1        _nop_();_nop_();_nop_();          //pulswith approx. 3 us
+ 140   1        SHT11_DATA=1;                           //release DATA-line
+ 141   1        return val;
+ 142   1      }
+ 143          
+ 144          
+ 145          
+ 146          
+ 147          /*--------------------------------------
+ 148          ;Ä£¿éÃû³Æ:s_measure();
+ 149          ;¹¦    ÄÜ:²âÁ¿ÎÂÊª¶Èº¯Êý
+ 150          ;Õ¼ÓÃ×ÊÔ´:--
+ 151          ;²ÎÊýËµÃ÷:--
+ 152          ;´´½¨ÈÕÆÚ:2008.08.15
+ 153          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+ 154          ;ÐÞ¸ÄÈÕÆÚ:--
+ 155          ;ÐÞ¸ÄËµÃ÷:--
+ 156          ;-------------------------------------*/
+ 157          static char s_measure(unsigned char *p_value, unsigned char *p_checksum, unsigned char mode)
+ 158          // makes a measurement (humidity/temperature) with checksum
+ 159          {  
+ 160   1        unsigned error=0;
+ 161   1        unsigned int i;
+ 162   1      
+ 163   1        s_transstart();                   //transmission start
+ 164   1        switch(mode){                     //send command to sensor
+ 165   2          case TEMP  : error+=s_write_byte(MEASURE_TEMP); break;
+ 166   2          case HUMI  : error+=s_write_byte(MEASURE_HUMI); break;
+ 167   2          default     : break;   
+ 168   2        }
+ 169   1        for (i=0;i<65535;i++) if(SHT11_DATA==0) break; //wait until sensor has finished the measurement
+ 170   1        if(SHT11_DATA) error+=1;                // or timeout (~2 sec.) is reached
+ 171   1        *(p_value)  =s_read_byte(ACK);    //read the first byte (MSB)
+ 172   1        *(p_value+1)=s_read_byte(ACK);    //read the second byte (LSB)
+ 173   1        *p_checksum =s_read_byte(noACK);  //read checksum
+ 174   1        return error;
+ 175   1      }
+ 176          
+C51 COMPILER V9.60.0.0   BSP_SHT11                                                         02/26/2020 22:23:08 PAGE 4   
+
+ 177          
+ 178          /*--------------------------------------
+ 179          ;Ä£¿éÃû³Æ:calc_dht90();
+ 180          ;¹¦    ÄÜ:ÎÂÊª¶È²¹³¥º¯Êý
+ 181          ;Õ¼ÓÃ×ÊÔ´:--
+ 182          ;²ÎÊýËµÃ÷:--
+ 183          ;´´½¨ÈÕÆÚ:2008.08.15
+ 184          ;°æ    ±¾:FV1.0(º¯Êý°æ±¾Function Version)
+ 185          ;ÐÞ¸ÄÈÕÆÚ:--
+ 186          ;ÐÞ¸ÄËµÃ÷:--
+ 187          ;-------------------------------------*/
+ 188          static void calc_dht90(float *p_humidity ,float *p_temperature)
+ 189          // calculates temperature [C] and humidity [%RH]
+ 190          // input :  humi [Ticks] (12 bit)
+ 191          //          temp [Ticks] (14 bit)
+ 192          // output:  humi [%RH]
+ 193          //          temp [C]
+ 194          { const float C1=-4.0;              // for 12 Bit
+ 195   1        const float C2=+0.0405;           // for 12 Bit
+ 196   1        const float C3=-0.0000028;        // for 12 Bit
+ 197   1        const float T1=+0.01;             // for 14 Bit @ 5V
+ 198   1        const float T2=+0.00008;           // for 14 Bit @ 5V
+ 199   1      
+ 200   1        float rh=*p_humidity;             // rh:      Humidity [Ticks] 12 Bit
+ 201   1        float t=*p_temperature;           // t:       Temperature [Ticks] 14 Bit
+ 202   1        float rh_lin;                     // rh_lin:  Humidity linear
+ 203   1        float rh_true;                    // rh_true: Temperature compensated humidity
+ 204   1        float t_C;                        // t_C   :  Temperature [C]
+ 205   1      
+ 206   1        t_C=t*0.01 - 40;                  //calc. temperature from ticks to [C]
+ 207   1        rh_lin=C3*rh*rh + C2*rh + C1;     //calc. humidity from ticks to [%RH]
+ 208   1        rh_true=(t_C-25)*(T1+T2*rh)+rh_lin-3;   //calc. temperature compensated humidity [%RH]
+ 209   1        if(rh_true>100)rh_true=100;       //cut if the value is outside of
+ 210   1        if(rh_true<0.1)rh_true=0.1;       //the physical possible range
+ 211   1      
+ 212   1        *p_temperature=t_C;               //return temperature [C]
+ 213   1        *p_humidity=rh_true;              //return humidity[%RH]
+ 214   1      }
+ 215          
+ 216          void vAutoGetSht11(char isprintf){
+ 217   1              value humi_val,temp_val;
+ 218   1              unsigned char checkval = 0;
+ 219   1              s_measure((unsigned char *)&humi_val.i, (unsigned char *)&checkval, HUMI);
+ 220   1              s_measure((unsigned char *)&temp_val.i, (unsigned char *)&checkval, TEMP);
+ 221   1              humi_val.f = humi_val.i;
+ 222   1              temp_val.f = temp_val.i;
+ 223   1              calc_dht90(&humi_val.f, &temp_val.f);
+ 224   1              fTemp = temp_val.f;
+ 225   1              fHumi = humi_val.f;
+ 226   1              if(isprintf)
+ 227   1                      printf("ÎÂ¶È:%05.1f¡æ,Êª¶È%05.1f%%\n", fTemp, fHumi);
+ 228   1      }
+ 229          
+ 230          float fGetHumi(void){
+ 231   1              return fHumi;
+ 232   1      }
+ 233          
+ 234          float fGetTemp(void){
+ 235   1              return fTemp;
+ 236   1      }
+ 237          
+ 238          
+C51 COMPILER V9.60.0.0   BSP_SHT11                                                         02/26/2020 22:23:08 PAGE 5   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    896    ----
+   CONSTANT SIZE    =     28    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8      65
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,177 @@
+C51 COMPILER V9.60.0.0   BSP_DS1302                                                        02/26/2020 22:23:07 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_DS1302
+OBJECT MODULE PLACED IN ..\Objects\bsp_ds1302.obj
+COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_ds1302.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc)
+                    - DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_ds1302.lst) OBJECT(..\Objects\bsp_ds1302.obj)
+
+line level    source
+
+   1          #include "inc.h"
+   2          
+   3          static void ds1302_write_byte(uchar addr, uchar d) ;
+   4          static uchar ds1302_read_byte(uchar addr);
+   5          
+   6          //初始时间定义
+   7          xdata uchar time_buf[8] = {0x20,0x20,0x02,0x26,0x21,0x55,0x40,0x03};//初始时间
+   8          xdata uchar readtime[15];//当前时间
+   9          uchar sec_buf=0;  //秒缓存
+  10          
+  11          
+  12          //DS1302初始化函数
+  13          void ds1302_init(void) 
+  14          {
+  15   1              DS1302_RST=0;                   //DS1302_RST脚置低
+  16   1              DS1302_SCK=0;                   //DS1302_SCK脚置低
+  17   1      }
+  18          //向DS1302写入一字节数据
+  19          static void ds1302_write_byte(uchar addr, uchar d) 
+  20          {
+  21   1              uchar i;
+  22   1              DS1302_RST=1;                                   //启动DS1302总线        
+  23   1              //写入目标地址：addr
+  24   1              addr = addr & 0xFE;   //最低位置零，寄存器0位为0时写，为1时读
+  25   1              for (i = 0; i < 8; i ++) {
+  26   2                      if (addr & 0x01) {
+  27   3                              DS1302_IO=1;
+  28   3                              }
+  29   2                      else {
+  30   3                              DS1302_IO=0;
+  31   3                              }
+  32   2                      DS1302_SCK=1;      //产生时钟
+  33   2                      DS1302_SCK=0;
+  34   2                      addr = addr >> 1;
+  35   2                      }       
+  36   1              //写入数据：d
+  37   1              for (i = 0; i < 8; i ++) {
+  38   2                      if (d & 0x01) {
+  39   3                              DS1302_IO=1;
+  40   3                              }
+  41   2                      else {
+  42   3                              DS1302_IO=0;
+  43   3                              }
+  44   2                      DS1302_SCK=1;    //产生时钟
+  45   2                      DS1302_SCK=0;
+  46   2                      d = d >> 1;
+  47   2                      }
+  48   1              DS1302_RST=0;           //停止DS1302总线
+  49   1      }
+  50          
+  51          //从DS1302读出一字节数据
+  52          static uchar ds1302_read_byte(uchar addr) {
+  53   1      
+  54   1              uchar i,temp;   
+C51 COMPILER V9.60.0.0   BSP_DS1302                                                        02/26/2020 22:23:07 PAGE 2   
+
+  55   1              DS1302_RST=1;                                   //启动DS1302总线
+  56   1              //写入目标地址：addr
+  57   1              addr = addr | 0x01;    //最低位置高，寄存器0位为0时写，为1时读
+  58   1              for (i = 0; i < 8; i ++) {
+  59   2                      if (addr & 0x01) {
+  60   3                              DS1302_IO=1;
+  61   3                              }
+  62   2                      else {
+  63   3                              DS1302_IO=0;
+  64   3                              }
+  65   2                      DS1302_SCK=1;
+  66   2                      DS1302_SCK=0;
+  67   2                      addr = addr >> 1;
+  68   2                      }       
+  69   1              //输出数据：temp
+  70   1              for (i = 0; i < 8; i ++) {
+  71   2                      temp = temp >> 1;
+  72   2                      if (DS1302_IO) {
+  73   3                              temp |= 0x80;
+  74   3                              }
+  75   2                      else {
+  76   3                              temp &= 0x7F;
+  77   3                              }
+  78   2                      DS1302_SCK=1;
+  79   2                      DS1302_SCK=0;
+  80   2                      }       
+  81   1              DS1302_RST=0;                                   //停止DS1302总线
+  82   1              return temp;
+  83   1      }
+  84          //向DS302写入时钟数据
+  85          void ds1302_write_time(void) 
+  86          {
+  87   1              ds1302_write_byte(ds1302_control_add,0x00);                     //关闭写保护 
+  88   1              ds1302_write_byte(ds1302_sec_add,0x80);                         //暂停时钟 
+  89   1              //ds1302_write_byte(ds1302_charger_add,0xa9);       //涓流充电 
+  90   1              ds1302_write_byte(ds1302_year_add,time_buf[1]);         //年 
+  91   1              ds1302_write_byte(ds1302_month_add,time_buf[2]);        //月 
+  92   1              ds1302_write_byte(ds1302_date_add,time_buf[3]);         //日 
+  93   1              ds1302_write_byte(ds1302_hr_add,time_buf[4]);           //时 
+  94   1              ds1302_write_byte(ds1302_min_add,time_buf[5]);          //分
+  95   1              ds1302_write_byte(ds1302_sec_add,time_buf[6]);          //秒
+  96   1              ds1302_write_byte(ds1302_day_add,time_buf[7]);          //周 
+  97   1              ds1302_write_byte(ds1302_control_add,0x80);                     //打开写保护     
+  98   1      }
+  99          //从DS302读出时钟数据
+ 100          void ds1302_read_time(void)  
+ 101          {
+ 102   1              time_buf[1]=ds1302_read_byte(ds1302_year_add);          //年 
+ 103   1              time_buf[2]=ds1302_read_byte(ds1302_month_add);         //月 
+ 104   1              time_buf[3]=ds1302_read_byte(ds1302_date_add);          //日 
+ 105   1              time_buf[4]=ds1302_read_byte(ds1302_hr_add);            //时 
+ 106   1              time_buf[5]=ds1302_read_byte(ds1302_min_add);           //分 
+ 107   1              time_buf[6]=(ds1302_read_byte(ds1302_sec_add))&0x7f;//秒，屏蔽秒的第7位，避免超出59
+ 108   1              time_buf[7]=ds1302_read_byte(ds1302_day_add);           //周    
+ 109   1      }
+ 110          
+ 111          
+ 112          uint8_t ds1302ShowTime(void)
+ 113          {
+ 114   1              uchar sec_flag = 0; //秒标志位
+ 115   1              ds1302_read_time();  //读取时间 
+ 116   1              readtime[0]=(time_buf[0]>>4);   //分离出年千位
+C51 COMPILER V9.60.0.0   BSP_DS1302                                                        02/26/2020 22:23:07 PAGE 3   
+
+ 117   1              readtime[1]=(time_buf[0]&0x0F); //分离出年百位 
+ 118   1              readtime[2]=(time_buf[1]>>4);   //分离出年十位
+ 119   1              readtime[3]=(time_buf[1]&0x0F); //分离出年个位 
+ 120   1      
+ 121   1              readtime[4]=(time_buf[2]>>4);   //分离出月十位
+ 122   1              readtime[5]=(time_buf[2]&0x0F); //分离出月个位 
+ 123   1      
+ 124   1              readtime[6]=(time_buf[3]>>4);   //分离出日十位
+ 125   1              readtime[7]=(time_buf[3]&0x0F); //分离出日个位 
+ 126   1      
+ 127   1              readtime[8]=(time_buf[4]>>4);   //分离出小时十位
+ 128   1              readtime[9]=(time_buf[4]&0x0F); //分离出小时个位 
+ 129   1              readtime[10]=(time_buf[5]>>4);   //分离出分钟十位
+ 130   1              readtime[11]=(time_buf[5]&0x0F); //分离出分钟个位
+ 131   1              readtime[12]=(time_buf[6]>>4);   //分离出秒钟十位
+ 132   1              readtime[13]=(time_buf[6]&0x0F); //分离出秒钟个位 
+ 133   1              readtime[14]=time_buf[7]; //分离出秒钟个位 
+ 134   1              if(readtime[13]!=sec_buf)
+ 135   1              {
+ 136   2                      sec_flag = 1;
+ 137   2                      sec_buf=readtime[13];
+ 138   2              }
+ 139   1              return sec_flag;        
+ 140   1      }
+ 141          
+ 142          uchar* GetTime(void)
+ 143          {
+ 144   1              return readtime;
+ 145   1      }
+ 146             
+ 147          
+ 148          
+ 149          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    447    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     23    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
