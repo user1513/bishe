@@ -1,5 +1,15 @@
-#include "bsp_usart.h"
+#include "inc.h"
 
+/*
+%d	两个字节变量	int
+%bd	单字节变量	char
+%ld	四字节变量	long int
+*/
+
+char putchar (char cData){
+    SendByte(cData);
+    return cData; 
+}
 
 
 void UartInit(void)		//9600bps@11.0592MHz
