@@ -1,6 +1,6 @@
 #include "bsp_keypad.h"
 
-static char key_val = 0XFF;
+static unsigned char key_val = 0XFF;
 
 code char hexaKeys[4][4] = {
   {'7','4','1','S'},
@@ -55,7 +55,7 @@ uint8_t uGetKeyPadAction(void)
 	return uReturn;
 }
 
-char Get_KeyPad(void)
+unsigned char Get_KeyPad(void)
 {
 	return key_val;
 }

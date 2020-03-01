@@ -8,7 +8,7 @@
 #define RESET_KEYPAD(_VAL) P1 &= ~(_VAL&0X0F)
 
 uint8_t uGetKeyPadAction(void);
-char Get_KeyPad(void);
+unsigned char Get_KeyPad(void);
 void uClear_KeyPad(void);
 #endif
 
