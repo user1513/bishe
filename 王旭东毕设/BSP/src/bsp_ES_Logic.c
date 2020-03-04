@@ -1,5 +1,5 @@
 #include "bsp_405x.h"
-//test
+
 static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw);
 
 float ES_Val = 0 ;
