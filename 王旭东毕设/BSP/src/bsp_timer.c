@@ -42,7 +42,7 @@ void Timer0Init(void)				//定时器初始化  10毫秒@12.000MHz
 }
 
 
-extern Info Dishes_Info;
+
 void tim0() interrupt 1
 {
 	static uint8_t timeout = 0;
@@ -53,7 +53,7 @@ void tim0() interrupt 1
 	{
 		timeout = 0;
 		uGetKeyPadAction();
-		Electronic_scale_scan(Dishes_Info.WhichES + 1,(float)read2543(0) / 819.0 );
+		Electronic_scale_scan(1,(float)read2543(0) / 819.0 );
 	}
 	
 }

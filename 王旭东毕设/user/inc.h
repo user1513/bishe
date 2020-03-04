@@ -8,23 +8,6 @@ typedef unsigned long int uint32_t;
 typedef unsigned int uint;
 typedef unsigned char uchar;
 	
-typedef struct _Dishe
-{
-	char* DisheName;
-	float price;
-}Dishes;
-
-typedef struct _info
-{
-	float weight;
-	float Peeled;
-	float price;
-	float money;
-	char Num;
-	char WhichES;
-}Info;
-
-
 #include <REGX52.H>
 #include "bsp_tcl1543.h"
 #include "intrins.h"

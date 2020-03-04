@@ -1,7 +1,22 @@
 #include "inc.h"
 
+typedef struct _Dishe
+{
+	char* DisheName;
+	float price;
+}Dishes;
 
-xdata Dishes Dishes_temp[] ={
+typedef struct _info
+{
+	float weight;
+	float Peeled;
+	float price;
+	float money;
+	char Num;
+	
+}Info;
+
+xdata Dishes temp[] ={
 {"qingcai",2.2},
 {"dabaicai",2.8},
 {"xiguan",4.9},
@@ -14,7 +29,7 @@ xdata Dishes Dishes_temp[] ={
 {"huasheng",55},
 {"niunai",88},};
 
-Info Dishes_Info = {0,0,2.2,0,0,0};
+Info Dishes_Info = {0,0,2.2,0,0};
 
 //xdata Info Dishes_Info_[4] = {
 //{0,2.2,0,0},
@@ -44,8 +59,8 @@ void lcd_display(void);
 char xdata str[25] = 0;
 void main(void)
 {
-	unsigned char key = 0;
-	uint8_t flag = 0,flag_temp = 0;
+	char key = 0;
+	uint8_t flag = 0;
 	lcd_display();
 	Timer0Init();
 	UartInit();
@@ -55,21 +70,21 @@ void main(void)
 		Dishes_Info.weight = Get_ES_Val() - Dishes_Info.Peeled;
 		sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight,key);
 		Send_String(str);
-		if(flag < 4)
+		if(key == 'C' && flag == 0)
 		{
-			sprintf(str, "WE:%01.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
+			Dishes_Info.Peeled = Get_ES_Val();
+			uClear_KeyPad();
+		}
+		if(flag != 2)
+		{
+			sprintf(str, "WE:%01.3f PR:%02.1f",Dishes_Info.weight,Dishes_Info.price);
 			LcdShowStr(0x80,str);
 			Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
 			sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
 			LcdShowStr(0x80 + 0x40,str);
 			switch(key)
 			{
-				case 'S':  flag = 1;  uClear_KeyPad();break;
-				case '=':  flag = 2;  uClear_KeyPad();break;
-				case 'C':  flag = 3;  flag += 1<<4 ;
-						   LcdShowStr(0x80,"                ");
-						   LcdShowStr(0x80+ 0x40,"                ");
-						   uClear_KeyPad();break;
+				case 'S': ++ flag ; flag %= 2; uClear_KeyPad();break;
 				case 0xff:break;
 				case '0':
 				case '1':
@@ -81,73 +96,45 @@ void main(void)
 				case '7':
 				case '8':
 				case '9':
+				case 'C':
 							if(flag == 1)
 							{
-								flag += 1<<4 ;
+								flag = 2;
 								LcdShowStr(0x80,"                ");
 								LcdShowStr(0x80+ 0x40,"                ");
-							}else if(flag == 2)
-							{
-								flag += 1<<4;
-							}
-							break;
+							}break;
 				default:break;
 			}			
 		}
-		if((flag & (1<<4)))
+		if(flag == 2)
 		{
-			flag_temp = flag ;
-			flag_temp &= ~(1<<4); 
 			if(key == 'S')
 			{
 				flag = 0;
 				uClear_KeyPad();
-			}		
-			switch(flag_temp)
-			{
-				case 1:
-			
-				if((key != 'S' ) && (key != 0xff)) 
-				{
-					Dishes_Info.price = Dishes_temp[key-'0'].price;
-					Dishes_Info.Num = key - '0';
-					sprintf(str, "菜名:%s, 单价:%2.1f\n",Dishes_temp[key-'0'].DisheName, Dishes_Info.price);
-					Send_String(str);
-					
-					sprintf(str, " name:%s",Dishes_temp[key-'0'].DisheName);
-					LcdShowStr(0x80,str);
-					
-					sprintf(str, "price:%2.1f      ",Dishes_Info.price);	
-					LcdShowStr(0x80 + 0x40,str);
-					uClear_KeyPad();	
-				}
-				break;
-				case 2:
-				if((key >= '0') && (key <= '9'))
-				{
-					LcdShowStr(0x80 ,"Electronic scale");
-					sprintf(str, "USE_MODE: NO:%d  ",(int)(key-'0'));
-					LcdShowStr(0x80 + 0x40 ,str);	
-					Dishes_Info.WhichES = key-'0';
-					uClear_KeyPad();
-				}
-				break;
-				case 3:
-					if(key != 'S')
-					{
-						Dishes_Info.Peeled = Get_ES_Val();
-						sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
-						Send_String(str);
-						LcdShowStr(0x80,"  name:Peeled  ");
-						
-						sprintf(str, "val:%2.3f      ",Dishes_Info.Peeled);	
-						LcdShowStr(0x80 + 0x40,str);	
-					}
-				break;
-				default :break;
 			}
-			
-			
+			else if(key != 'C')
+			{
+				Dishes_Info.price = temp[key-'0'].price;
+				Dishes_Info.Num = key - '0';
+				sprintf(str, "菜名:%s, 单价:%2.1f\n",temp[key-'0'].DisheName, Dishes_Info.price);
+				Send_String(str);
+				
+				sprintf(str, " name:%s",temp[key-'0'].DisheName);
+				LcdShowStr(0x80,str);
+				
+				sprintf(str, "price:%2.1f      ",Dishes_Info.price);	
+				LcdShowStr(0x80 + 0x40,str);	
+			}
+			else
+			{
+				sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
+				Send_String(str);
+				LcdShowStr(0x80,"  name:Peeled  ");
+				
+				sprintf(str, "val:%2.3f      ",Dishes_Info.Peeled);	
+				LcdShowStr(0x80 + 0x40,str);	
+			}
 			
 		}
 		
@@ -167,6 +154,10 @@ void lcd_display(void)
 	LcdShowStr(0x80+ 0x40,"   name: XXX    ");
 	Delay200ms();
 	Delay200ms();
+	Delay200ms();
+	Delay200ms();
+	LcdShowStr(0x80,"WE:0.000 PR:00.0");
+	LcdShowStr(0x80 + 0x40,"MONEY:000.0 No:0");	
 }
 
 

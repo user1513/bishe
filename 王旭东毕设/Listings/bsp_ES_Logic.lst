@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/02/2020 00:34:34 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_ES_LOGIC
 OBJECT MODULE PLACED IN ..\Objects\bsp_ES_Logic.obj
-COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE ..\BSP\src\bsp_ES_Logic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP
-                    -\inc) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_ES_Logic.lst) OBJECT(..\Objects\bsp_ES_Logic.obj)
+COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_ES_Logic.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\in
+                    -c) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_ES_Logic.lst) OBJECT(..\Objects\bsp_ES_Logic.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52   2                                              case 1:OP_1_ENALBE              break;
   53   2                                              case 2:OP_5_ENALBE              break;
   54   2                                              case 3:OP_25_ENALBE     break;
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/02/2020 00:34:34 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 2   
 
   55   2                                              default:break;
   56   2                                      }
@@ -126,7 +126,7 @@ line level    source
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    422    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/02/2020 00:34:34 PAGE 3   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      02/16/2020 15:30:13 PAGE 3   
 
    XDATA SIZE       =     10    ----
    PDATA SIZE       =   ----    ----
