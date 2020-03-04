@@ -1,16 +1,16 @@
-C51 COMPILER V9.60.0.0   BSP_KEYPAD                                                        02/16/2020 15:16:04 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_KEYPAD                                                        03/02/2020 00:34:33 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_KEYPAD
 OBJECT MODULE PLACED IN ..\Objects\bsp_keypad.obj
-COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_keypad.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc)
-                    - DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_keypad.lst) OBJECT(..\Objects\bsp_keypad.obj)
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE ..\BSP\src\bsp_keypad.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\i
+                    -nc) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_keypad.lst) OBJECT(..\Objects\bsp_keypad.obj)
 
 line level    source
 
    1          #include "bsp_keypad.h"
    2          
-   3          static char key_val = 0XFF;
+   3          static unsigned char key_val = 0XFF;
    4          
    5          code char hexaKeys[4][4] = {
    6            {'7','4','1','S'},
@@ -62,12 +62,12 @@ line level    source
   52   1              {
   53   2                      key_val = (hexaKeys[i][uReturn % 4] );
   54   2              }
-C51 COMPILER V9.60.0.0   BSP_KEYPAD                                                        02/16/2020 15:16:04 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_KEYPAD                                                        03/02/2020 00:34:33 PAGE 2   
 
   55   1              return uReturn;
   56   1      }
   57          
-  58          char Get_KeyPad(void)
+  58          unsigned char Get_KeyPad(void)
   59          {
   60   1              return key_val;
   61   1      }

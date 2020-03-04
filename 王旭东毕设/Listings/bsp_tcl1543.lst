@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   BSP_TCL1543                                                       02/16/2020 15:16:04 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_TCL1543                                                       03/02/2020 00:34:33 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_TCL1543
 OBJECT MODULE PLACED IN ..\Objects\bsp_tcl1543.obj
-COMPILER INVOKED BY: C:\keil\C51\BIN\C51.EXE ..\BSP\src\bsp_tcl1543.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc
-                    -) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_tcl1543.lst) OBJECT(..\Objects\bsp_tcl1543.obj)
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE ..\BSP\src\bsp_tcl1543.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\user;..\BSP\
+                    -inc) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_tcl1543.lst) OBJECT(..\Objects\bsp_tcl1543.obj)
 
 line level    source
 
