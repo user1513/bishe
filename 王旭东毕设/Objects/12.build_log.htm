@@ -23,7 +23,8 @@ Project File Date:  03/01/2020
 
 <h2>Output:</h2>
 Build target 'Target 1'
-compiling bsp_main.c...
+compiling bsp_timer.c...
+..\BSP\src\bsp_timer.c(48): warning C280: 'timeout': unreferenced local variable
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_DELAY1MS?BSP_LCD
@@ -31,10 +32,10 @@ linking...
     SEGMENT: ?PR?GETTCL1543?BSP_TCL1543
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_SEND_STRING_LEN?BSP_USART
-Program Size: data=83.1 xdata=112 code=5205
+Program Size: data=103.1 xdata=126 code=5373
 creating hex file from "..\Objects\12"...
-"..\Objects\12" - 0 Error(s), 3 Warning(s).
-Build Time Elapsed:  00:00:01
+"..\Objects\12" - 0 Error(s), 4 Warning(s).
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

@@ -20,9 +20,9 @@
 #define _4052_INPUT_A 	(1<<6)
 #define _4052_INPUT_B 	(1<<7)
 
-#define OP_1_ENALBE  		{_4052_IO &= ~(_4052_INPUT_A + _4052_INPUT_B);}
-#define OP_5_ENALBE			{_4052_IO &= ~_4052_INPUT_B; _4052_IO |= _4052_INPUT_A;}
-#define OP_25_ENALBE		{_4052_IO &= ~_4052_INPUT_A ; _4052_IO |= _4052_INPUT_B;}
+#define OP_dw1_ENALBE  		{_4052_IO &= ~(_4052_INPUT_A + _4052_INPUT_B);}
+#define OP_dw2_ENALBE			{_4052_IO &= ~_4052_INPUT_B; _4052_IO |= _4052_INPUT_A;}
+#define OP_dw3_ENALBE		{_4052_IO &= ~_4052_INPUT_A ; _4052_IO |= _4052_INPUT_B;}
 
 float Get_ES_Val(void);
 uint8_t Electronic_scale_scan(uint8_t _scan,float val);

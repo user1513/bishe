@@ -1,111 +1,155 @@
 #include "bsp_405x.h"
 //test
-static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw);
 
-float ES_Val = 0 ;
-float Get_ES_Val(void)
+const float Electronic_dw[3] = {1.01, 4.5, 45};//设置每个挡位的放大倍数,从左到右1->3挡位
+
+struct _Es_Range
 {
-	return(ES_Val);
+	/* data */
+	float Range_min;		//挡位最小值
+	float Range_max;		//挡位最大值
+};
+
+xdata struct _Es_Range Es_Range[3] ={ 
+{1, 5},				  //设置第一个挡位的范围
+{0.1, 1},			  //设置第二个挡位的范围
+{0, 0.1}};			   //设置第三个挡位的范围
+
+static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw);//自动获取合适挡位
+
+static float ES_Val[2] = 0 ;//获取的电压值
+
+float Get_ES_Val(void)	//外部调用获取电压值
+{
+	//return(*ES_Val);
+	return(*(ES_Val + 1));
 }
-uint8_t laststate = 1;
-char xdata xstr[10] = 0;
+
+static float Get_ES_Val2(void)	//外部调用获取电压值
+{
+	return(*(ES_Val + 1));
+}
+
+static void Set_ES_Val1(float temp)	//内部调用设置校零电压值
+{
+	*ES_Val = temp;
+}
+
+static void Set_ES_Val2(float temp)	//内部调用设置未校零电压值
+{
+	*(ES_Val + 1) = temp;
+}
+
 uint8_t Electronic_scale_scan(uint8_t _scan,float val)
 {
-	
-	static uint8_t State_Machine = 1;
+	static uint8_t State_Machine = 1;	//状态机
+	static uint8_t last_scan = 0;		//记录上一次输入挡位
+	static uint8_t last_dw = 1;			//记录上一次放大挡位(初始化默认为1)
 	uint8_t temp = 0;
+	if(_scan != last_scan){				//当输入的电子秤编号与上一次不同时进行状态机置1
+		last_scan = _scan;
+		//设置从第一步开始
+		State_Machine = 1;
+	}
+
+
+
 	switch(State_Machine)
 	{
 		case 1:
-			switch(_scan)
+			switch(last_scan)							//打开对应输入开关
 			{
-				case 1:INPUT_ONE_ENALBE 		break;
-				case 2:INPUT_TWO_ENALBE 		break;
-				case 3:INPUT_THREE_ENALBE 		break;
-				case 4:INPUT_FOUR_ENALBE 		break;
-				case 5:INPUT_CLEAR_ENALBE 		break;
+				case 0:INPUT_ONE_ENALBE 		break;
+				case 1:INPUT_TWO_ENALBE 		break;
+				case 2:INPUT_THREE_ENALBE 		break;
+				case 3:INPUT_FOUR_ENALBE 		break;
+				case 4:INPUT_CLEAR_ENALBE 		break;
 				default :INPUT_CLEAR_ENALBE	break;
 			}
+			OP_dw1_ENALBE;
 			State_Machine++;
 		break;
-		case 2:
-			laststate = Electronic_Auto_Mode(val, 1);
-			switch(laststate)
+		case 2:											//进行数据的获取
+			temp = Electronic_Auto_Mode(val, last_dw);
+			
+			if(last_dw != temp){
+				last_dw = temp;
+				switch(last_dw)
 				{
-					case 1:OP_1_ENALBE 		break;
-					case 2:OP_5_ENALBE 		break;
-					case 3:OP_25_ENALBE 	break;
+					case 1:OP_dw1_ENALBE  		break;
+					case 2:OP_dw2_ENALBE  		break;
+					case 3:OP_dw3_ENALBE  		break;
 					default:break;
 				}
-//			State_Machine++;	
-				State_Machine = 4;
-//				sprintf(xstr, "ls10:%d",(int)laststate);
-//				Send_String(xstr);
-			break;
-			/*
-			temp = Electronic_Auto_Mode(val, laststate);
-			if(temp != laststate)
-			{
-				laststate = temp;
-				switch(laststate)
-				{
-					case 1:OP_1_ENALBE 		break;
-					case 2:OP_5_ENALBE 		break;
-					case 3:OP_25_ENALBE 	break;
-					default:break;
-				}
-				State_Machine++;
-				break;
-			}		
-			*/	
-//		case 3:	State_Machine++;break;	
-		case 4:	State_Machine++;break;			
-		case 5:
-//			if(Electronic_Auto_Mode(val,laststate) != laststate)
-//				State_Machine = 2;
-//			else 
-			{
-				State_Machine = 1;
-//				sprintf(xstr, "ls20:%d",(int)laststate);
-//				Send_String(xstr);
-				switch(laststate)
-				{
-					case 1: val /= 1.0;		break;
-					case 2: val /= 4.5; 	break;
-					case 3:	 val/= 25.0; 	break;
-					default:val = 0;break;
-				}
-				ES_Val = val;
-				OP_1_ENALBE
+				State_Machine = 5;
 			}
-				
-		break;
+			else{
+				Set_ES_Val2(val / Electronic_dw[last_dw-1]);
+				State_Machine++;
+				INPUT_CLEAR_ENALBE
+			}
+			break;
+		case 3:State_Machine++; break;
+		case 4:						//获取校零数据
+			Set_ES_Val1(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]));
+			switch(last_scan)							//打开对应输入开关
+			{
+				case 0:INPUT_ONE_ENALBE 		break;
+				case 1:INPUT_TWO_ENALBE 		break;
+				case 2:INPUT_THREE_ENALBE 		break;
+				case 3:INPUT_FOUR_ENALBE 		break;
+				case 4:INPUT_CLEAR_ENALBE 		break;
+				default :INPUT_CLEAR_ENALBE	break;
+			}
+			State_Machine = 5;//重新获取数据
+			break;
+		case 5:State_Machine = 2; break;	
+		default: break;
 	}
 	return 0;
 }
 
+
+
 static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
 {
 	uint8_t state = 0;
-	switch(dw)
-	{
-		case 1: if(val >= 1)
-					state = 1;
-				else if(val < 1 && val >= 0.2)
-					state = 2;
-				else if(val > 0)
-					state = 3;
-		break;
-		case 2:
-				if(val >= 1)
-					state = 2;
-				else 
-					state = 3;
-		break;
-		case 3:
-			if(val < 5)
-					state = 3;
-			break;
-	}
+	float temp = val / Electronic_dw[dw - 1];//数组存储从0开始
+		if(temp > Es_Range[0].Range_min)
+			state = 1;
+		else if(temp <= Es_Range[1].Range_max && temp > Es_Range[1].Range_min)
+			state = 2;
+		else if(temp <= Es_Range[2].Range_max && temp >= Es_Range[2].Range_min)
+			state = 3;
 	return state;
 }
+
+
+
+
+
+// static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
+// {
+// 	uint8_t state = 0;
+// 	float temp = val / Electronic_dw[dw];
+// 	switch(dw)
+// 	{
+// 		case 1: if(temp > Es_Range[0].Rangle_min)
+// 					state = 1;
+// 				else if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
+// 					state = 2;
+// 				else if(temp > 0)
+// 					state = 3;
+// 		break;
+// 		case 2:
+// 				if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
+// 					state = 2;
+// 				else if(temp > 0)
+// 					state = 3;
+// 		break;
+// 		case 3:
+// 				if(temp <= Es_Range[2].Rangle_max && temp > Es_Range[2].Rangle_min)
+// 					state = 3;
+// 	}
+// 	return state;
+// }

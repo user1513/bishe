@@ -45,16 +45,17 @@ void Timer0Init(void)				//定时器初始化  10毫秒@12.000MHz
 extern Info Dishes_Info;
 void tim0() interrupt 1
 {
-	static uint8_t timeout = 0;
+	//static uint8_t timeout = 0;
     TL0 = 0x00;																							//设置定时初值
     TH0 = 0x4C;																							//设置定时初值
 	
-	if(timeout++ == 10)
-	{
-		timeout = 0;
+	// if(timeout++ == 2)
+	// {
+	// 	timeout = 0;
+    
 		uGetKeyPadAction();
-		Electronic_scale_scan(Dishes_Info.WhichES + 1,(float)read2543(0) / 819.0 );
-	}
+		Electronic_scale_scan(Dishes_Info.WhichES,(float)read2543(0) / 819.0 );
+	// }
 	
 }
 

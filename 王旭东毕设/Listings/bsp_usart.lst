@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_USART                                                         03/02/2020 00:34:33 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_USART                                                         03/08/2020 17:04:34 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_USART
@@ -62,7 +62,7 @@ line level    source
   52   2                      SendByte(*str); 
   53   2                      str++;
   54   2              }
-C51 COMPILER V9.60.0.0   BSP_USART                                                         03/02/2020 00:34:33 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_USART                                                         03/08/2020 17:04:34 PAGE 2   
 
   55   1                                                                        
   56   1      }
