@@ -1,0 +1,1 @@
+"..\BSP\src\bsp_lcd.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_lcd.lst) OBJECT(..\Objects\bsp_lcd.obj)
