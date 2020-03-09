@@ -101,7 +101,8 @@ uint8_t Electronic_scale_scan(uint8_t _scan,float val)
 					Set_ES_Val1(0.991612*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.0193707) ;
 				break;
 				case 2:Set_ES_Val1(1.02098*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.00819215) ;break;
-				case 3:Set_ES_Val1(1.02078*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.000493174) ;break;
+				case 3:Set_ES_Val1(1.02078*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.000493174) ;
+					  if(Get_ES_Val() <= 0.001) Set_ES_Val1(0);break;
 				default:break;
 			}
 			switch(last_scan)							//打开对应输入开关

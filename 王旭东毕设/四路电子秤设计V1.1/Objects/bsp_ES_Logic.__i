@@ -1,1 +1,0 @@
-"..\BSP\src\bsp_ES_Logic.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(..\user;..\BSP\inc) DEBUG OBJECTEXTEND PRINT(..\Listings\bsp_ES_Logic.lst) OBJECT(..\Objects\bsp_ES_Logic.obj)

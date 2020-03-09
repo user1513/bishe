@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 12:39:44 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 13:25:19 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_ES_LOGIC
@@ -62,7 +62,7 @@ line level    source
   52   2                      State_Machine = 1;
   53   2              }
   54   1      
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 12:39:44 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 13:25:19 PAGE 2   
 
   55   1      
   56   1      
@@ -114,84 +114,85 @@ line level    source
  101   3                                              Set_ES_Val1(0.991612*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.0193707) ;
  102   3                                      break;
  103   3                                      case 2:Set_ES_Val1(1.02098*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.00819215) ;break;
- 104   3                                      case 3:Set_ES_Val1(1.02078*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.000493174) ;break;
- 105   3                                      default:break;
- 106   3                              }
- 107   2                              switch(last_scan)                                                       //打开对应输入开关
- 108   2                              {
- 109   3                                      case 0:INPUT_ONE_ENALBE                 break;
- 110   3                                      case 1:INPUT_TWO_ENALBE                 break;
- 111   3                                      case 2:INPUT_THREE_ENALBE               break;
- 112   3                                      case 3:INPUT_FOUR_ENALBE                break;
- 113   3                                      case 4:INPUT_CLEAR_ENALBE               break;
- 114   3                                      default :INPUT_CLEAR_ENALBE     break;
- 115   3                              }
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 12:39:44 PAGE 3   
+ 104   3                                      case 3:Set_ES_Val1(1.02078*(Get_ES_Val2() - (val / Electronic_dw[last_dw - 1]))+0.000493174) ;
+ 105   3                                                if(Get_ES_Val() <= 0.001) Set_ES_Val1(0);break;
+ 106   3                                      default:break;
+ 107   3                              }
+ 108   2                              switch(last_scan)                                                       //打开对应输入开关
+ 109   2                              {
+ 110   3                                      case 0:INPUT_ONE_ENALBE                 break;
+ 111   3                                      case 1:INPUT_TWO_ENALBE                 break;
+ 112   3                                      case 2:INPUT_THREE_ENALBE               break;
+ 113   3                                      case 3:INPUT_FOUR_ENALBE                break;
+ 114   3                                      case 4:INPUT_CLEAR_ENALBE               break;
+ 115   3                                      default :INPUT_CLEAR_ENALBE     break;
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 13:25:19 PAGE 3   
 
- 116   2                              State_Machine = 5;//重新获取数据
- 117   2                              break;
- 118   2                      case 5:State_Machine = 2; break;        
- 119   2                      default: break;
- 120   2              }
- 121   1              return 0;
- 122   1      }
- 123          
+ 116   3                              }
+ 117   2                              State_Machine = 5;//重新获取数据
+ 118   2                              break;
+ 119   2                      case 5:State_Machine = 2; break;        
+ 120   2                      default: break;
+ 121   2              }
+ 122   1              return 0;
+ 123   1      }
  124          
  125          
- 126          static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
- 127          {
- 128   1              uint8_t state = 0;
- 129   1              float temp = val / Electronic_dw[dw - 1];//数组存储从0开始
- 130   1                      if(temp > Es_Range[0].Range_min)
- 131   1                              state = 1;
- 132   1                      else if(temp <= Es_Range[1].Range_max && temp > Es_Range[1].Range_min)
- 133   1                              state = 2;
- 134   1                      else if(temp >= Es_Range[2].Range_min)
- 135   1                              state = 3;
- 136   1              return state;
- 137   1      }
- 138          
+ 126          
+ 127          static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
+ 128          {
+ 129   1              uint8_t state = 0;
+ 130   1              float temp = val / Electronic_dw[dw - 1];//数组存储从0开始
+ 131   1                      if(temp > Es_Range[0].Range_min)
+ 132   1                              state = 1;
+ 133   1                      else if(temp <= Es_Range[1].Range_max && temp > Es_Range[1].Range_min)
+ 134   1                              state = 2;
+ 135   1                      else if(temp >= Es_Range[2].Range_min)
+ 136   1                              state = 3;
+ 137   1              return state;
+ 138   1      }
  139          
  140          
  141          
  142          
- 143          // static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
- 144          // {
- 145          //      uint8_t state = 0;
- 146          //      float temp = val / Electronic_dw[dw];
- 147          //      switch(dw)
- 148          //      {
- 149          //              case 1: if(temp > Es_Range[0].Rangle_min)
- 150          //                                      state = 1;
- 151          //                              else if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
- 152          //                                      state = 2;
- 153          //                              else if(temp > 0)
- 154          //                                      state = 3;
- 155          //              break;
- 156          //              case 2:
- 157          //                              if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
- 158          //                                      state = 2;
- 159          //                              else if(temp > 0)
- 160          //                                      state = 3;
- 161          //              break;
- 162          //              case 3:
- 163          //                              if(temp <= Es_Range[2].Rangle_max && temp > Es_Range[2].Rangle_min)
- 164          //                                      state = 3;
- 165          //      }
- 166          //      return state;
- 167          // }
+ 143          
+ 144          // static uint8_t  Electronic_Auto_Mode(float val,uint8_t dw)
+ 145          // {
+ 146          //      uint8_t state = 0;
+ 147          //      float temp = val / Electronic_dw[dw];
+ 148          //      switch(dw)
+ 149          //      {
+ 150          //              case 1: if(temp > Es_Range[0].Rangle_min)
+ 151          //                                      state = 1;
+ 152          //                              else if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
+ 153          //                                      state = 2;
+ 154          //                              else if(temp > 0)
+ 155          //                                      state = 3;
+ 156          //              break;
+ 157          //              case 2:
+ 158          //                              if(temp <= Es_Range[1].Rangle_max && temp > Es_Range[1].Rangle_min)
+ 159          //                                      state = 2;
+ 160          //                              else if(temp > 0)
+ 161          //                                      state = 3;
+ 162          //              break;
+ 163          //              case 3:
+ 164          //                              if(temp <= Es_Range[2].Rangle_max && temp > Es_Range[2].Rangle_min)
+ 165          //                                      state = 3;
+ 166          //      }
+ 167          //      return state;
+ 168          // }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    864    ----
+   CODE SIZE        =    893    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     24    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     23      15
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
-C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 12:39:44 PAGE 4   
+C51 COMPILER V9.60.0.0   BSP_ES_LOGIC                                                      03/09/2020 13:25:19 PAGE 4   
 
+   BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
