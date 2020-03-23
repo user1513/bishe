@@ -155,6 +155,7 @@ void LcdInit()						  //LCD初始化子程序
 
 void LcdShowStr(char cAddr,char *pStr)
 {
+	ET0 = 0;
 	while(*pStr != '\0')
 	{
 		LcdWriteCom(cAddr);
@@ -162,6 +163,7 @@ void LcdShowStr(char cAddr,char *pStr)
 		LcdWriteData(*pStr);
 		pStr++;
 	}
+	ET0 = 1;
 }
 
 
