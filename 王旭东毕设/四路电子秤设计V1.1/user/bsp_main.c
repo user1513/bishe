@@ -165,7 +165,7 @@ void lcd_display(void)
 	Delay200ms();
 	Delay200ms();
 	LcdShowStr(0x80 ,"  class: b16   ");
-	LcdShowStr(0x80+ 0x40,"   name: XXX    ");
+	LcdShowStr(0x80+ 0x40," name: W X D");
 	Delay200ms();
 	Delay200ms();
 }
