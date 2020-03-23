@@ -42,7 +42,7 @@
      <ITEM name="TopLineAddress">00000000</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="184" x="98" flags="00000008" y="189" h="226" pid="1" iid="1">
+   <POPUP w="24" x="98" flags="00000008" y="189" h="17" pid="1" iid="1">
     <PROPERTIES/>
    </POPUP>
    <POPUP w="8" x="118" flags="0000000a" y="209" h="16" pid="3" iid="1">
