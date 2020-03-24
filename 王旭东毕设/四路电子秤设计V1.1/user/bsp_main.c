@@ -58,6 +58,7 @@ void main(void)
 		Send_String(str);
 		if(flag < 4)
 		{
+			
 			sprintf(str, "WE:%01.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
 			LcdShowStr(0x80,str);
 			Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
@@ -103,7 +104,7 @@ void main(void)
 			{
 				flag = 0;
 				uClear_KeyPad();
-			}		
+			}	
 			switch(flag_temp)
 			{
 				case 1:
