@@ -45,8 +45,10 @@ void main(void)
 	{
 		key = Get_KeyPad() ;
 		Dishes_Info.weight = Get_ES_Val() - Dishes_Info.Peeled;
-		sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)(Dishes_Info.WhichES + 1), Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
+		sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,""总价:",(int)(Dishes_Info.WhichES + 1), Dishes_Info.weight, (int)Dishes_Info.Num);
+		sprintf(str + strlen(str), "%06.2f;",Dishes_Info.money);
 		Send_String(str);
+		
 		if(flag < 4)
 		{
 			

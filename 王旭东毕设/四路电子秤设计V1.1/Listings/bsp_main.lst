@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 15:57:34 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 20:44:48 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_MAIN
@@ -55,154 +55,154 @@ line level    source
   45   1              {
   46   2                      key = Get_KeyPad() ;
   47   2                      Dishes_Info.weight = Get_ES_Val() - Dishes_Info.Peeled;
-  48   2                      sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)(Dishes_Info.WhichES + 1), Dishes_I
-             -nfo.weight, (int)Dishes_Info.Num, Dishes_Info.money);
-  49   2                      Send_String(str);
-  50   2                      if(flag < 4)
-  51   2                      {
-  52   3                              
-  53   3                              sprintf(str, "WE:%05.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 15:57:34 PAGE 2   
+  48   2                      sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,""总价:",(int)(Dishes_Info.WhichES + 1), Dishes_Info.w
+             -eight, (int)Dishes_Info.Num);
+  49   2                      sprintf(str + strlen(str), "%06.2f;",Dishes_Info.money);
+  50   2                      Send_String(str);
+  51   2                      
+  52   2                      if(flag < 4)
+  53   2                      {
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 20:44:48 PAGE 2   
 
-  54   3                              LcdShowStr(0x80,str);
-  55   3                              Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
-  56   3                              sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
-  57   3                              LcdShowStr(0x80 + 0x40,str);
-  58   3                              switch(key)
-  59   3                              {
-  60   4                                      case 'S':  flag = 1;  uClear_KeyPad();break;
-  61   4                                      case '=':  flag = 2;  uClear_KeyPad();break;
-  62   4                                      case 'C':  flag = 3;  flag += 1<<4 ;
-  63   4                                                         LcdShowStr(0x80,"                ");
-  64   4                                                         LcdShowStr(0x80+ 0x40,"                ");
-  65   4                                                         uClear_KeyPad();break;
-  66   4                                      case 0xff:break;
-  67   4                                      case '0':
-  68   4                                      case '1':
-  69   4                                      case '2':
-  70   4                                      case '3':
-  71   4                                      case '4':
-  72   4                                      case '5':
-  73   4                                      case '6':
-  74   4                                      case '7':
-  75   4                                      case '8':
-  76   4                                      case '9':
-  77   4                                                              if(flag == 1)
-  78   4                                                              {
-  79   5                                                                      flag += 1<<4 ;
-  80   5                                                                      LcdShowStr(0x80,"                ");
-  81   5                                                                      LcdShowStr(0x80+ 0x40,"                ");
-  82   5                                                              }else if(flag == 2)
-  83   4                                                              {
-  84   5                                                                      flag += 1<<4;
-  85   5                                                              }
-  86   4                                                              break;
-  87   4                                      default:break;
-  88   4                              }                       
-  89   3                      }
-  90   2                      if((flag & (1<<4)))
-  91   2                      {
-  92   3                              flag_temp = flag ;
-  93   3                              flag_temp &= ~(1<<4); 
-  94   3                              if(key == 'S')
-  95   3                              {
-  96   4                                      flag = 0;
-  97   4                                      uClear_KeyPad();
-  98   4                              }       
-  99   3                              switch(flag_temp)
- 100   3                              {
- 101   4                                      case 1:
- 102   4                              
- 103   4                                      if((key != 'S' ) && (key != 0xff)) 
- 104   4                                      {
- 105   5                                              Dishes_Info.price = Dishes_temp[key-'0'].price;
- 106   5                                              Dishes_Info.Num = key - '0';
- 107   5                                              //sprintf(str, "菜名:%s, 单价:%2.1f\n",Dishes_temp[key-'0'].DisheName, Dishes_Info.price);
- 108   5                                              //Send_String(str);
- 109   5                                              
- 110   5                                              sprintf(str, " name:%s",Dishes_temp[key-'0'].DisheName);
- 111   5                                              LcdShowStr(0x80,str);
- 112   5                                              
- 113   5                                              sprintf(str, "price:%2.1f      ",Dishes_Info.price);    
- 114   5                                              LcdShowStr(0x80 + 0x40,str);
- 115   5                                              uClear_KeyPad();        
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 15:57:34 PAGE 3   
+  54   3                              
+  55   3                              sprintf(str, "WE:%05.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
+  56   3                              LcdShowStr(0x80,str);
+  57   3                              Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
+  58   3                              sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
+  59   3                              LcdShowStr(0x80 + 0x40,str);
+  60   3                              switch(key)
+  61   3                              {
+  62   4                                      case 'S':  flag = 1;  uClear_KeyPad();break;
+  63   4                                      case '=':  flag = 2;  uClear_KeyPad();break;
+  64   4                                      case 'C':  flag = 3;  flag += 1<<4 ;
+  65   4                                                         LcdShowStr(0x80,"                ");
+  66   4                                                         LcdShowStr(0x80+ 0x40,"                ");
+  67   4                                                         uClear_KeyPad();break;
+  68   4                                      case 0xff:break;
+  69   4                                      case '0':
+  70   4                                      case '1':
+  71   4                                      case '2':
+  72   4                                      case '3':
+  73   4                                      case '4':
+  74   4                                      case '5':
+  75   4                                      case '6':
+  76   4                                      case '7':
+  77   4                                      case '8':
+  78   4                                      case '9':
+  79   4                                                              if(flag == 1)
+  80   4                                                              {
+  81   5                                                                      flag += 1<<4 ;
+  82   5                                                                      LcdShowStr(0x80,"                ");
+  83   5                                                                      LcdShowStr(0x80+ 0x40,"                ");
+  84   5                                                              }else if(flag == 2)
+  85   4                                                              {
+  86   5                                                                      flag += 1<<4;
+  87   5                                                              }
+  88   4                                                              break;
+  89   4                                      default:break;
+  90   4                              }                       
+  91   3                      }
+  92   2                      if((flag & (1<<4)))
+  93   2                      {
+  94   3                              flag_temp = flag ;
+  95   3                              flag_temp &= ~(1<<4); 
+  96   3                              if(key == 'S')
+  97   3                              {
+  98   4                                      flag = 0;
+  99   4                                      uClear_KeyPad();
+ 100   4                              }       
+ 101   3                              switch(flag_temp)
+ 102   3                              {
+ 103   4                                      case 1:
+ 104   4                              
+ 105   4                                      if((key != 'S' ) && (key != 0xff)) 
+ 106   4                                      {
+ 107   5                                              Dishes_Info.price = Dishes_temp[key-'0'].price;
+ 108   5                                              Dishes_Info.Num = key - '0';
+ 109   5                                              //sprintf(str, "菜名:%s, 单价:%2.1f\n",Dishes_temp[key-'0'].DisheName, Dishes_Info.price);
+ 110   5                                              //Send_String(str);
+ 111   5                                              
+ 112   5                                              sprintf(str, " name:%s",Dishes_temp[key-'0'].DisheName);
+ 113   5                                              LcdShowStr(0x80,str);
+ 114   5                                              
+ 115   5                                              sprintf(str, "price:%2.1f      ",Dishes_Info.price);    
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 20:44:48 PAGE 3   
 
- 116   5                                      }
- 117   4                                      break;
- 118   4                                      case 2:
- 119   4                                      if((key >= '0') && (key <= '9'))
- 120   4                                      {
- 121   5                                              LcdShowStr(0x80 ,"Electronic scale");
- 122   5                                              sprintf(str, "USE_MODE: NO:%d  ",(int)(key-'0'));
- 123   5                                              LcdShowStr(0x80 + 0x40 ,str);   
- 124   5                                              Dishes_Info.WhichES = key-'0';
- 125   5                                              uClear_KeyPad();
- 126   5                                      }
- 127   4                                      break;
- 128   4                                      case 3:
- 129   4                                              if(key != 'S')
- 130   4                                              {
- 131   5                                                      Dishes_Info.Peeled = Get_ES_Val();
- 132   5                                                      //sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
- 133   5                                                      //
- 134   5                                                      Send_String(str);
- 135   5                                                      LcdShowStr(0x80,"  name:Peeled  ");
- 136   5                                                      
- 137   5                                                      sprintf(str, "val:%2.3f      ",Dishes_Info.Peeled);     
- 138   5                                                      LcdShowStr(0x80 + 0x40,str);    
- 139   5                                              }
- 140   4                                      break;
- 141   4                                      default :break;
- 142   4                              }
- 143   3                              
- 144   3                              
+ 116   5                                              LcdShowStr(0x80 + 0x40,str);
+ 117   5                                              uClear_KeyPad();        
+ 118   5                                      }
+ 119   4                                      break;
+ 120   4                                      case 2:
+ 121   4                                      if((key >= '0') && (key <= '9'))
+ 122   4                                      {
+ 123   5                                              LcdShowStr(0x80 ,"Electronic scale");
+ 124   5                                              sprintf(str, "USE_MODE: NO:%d  ",(int)(key-'0'));
+ 125   5                                              LcdShowStr(0x80 + 0x40 ,str);   
+ 126   5                                              Dishes_Info.WhichES = key-'0';
+ 127   5                                              uClear_KeyPad();
+ 128   5                                      }
+ 129   4                                      break;
+ 130   4                                      case 3:
+ 131   4                                              if(key != 'S')
+ 132   4                                              {
+ 133   5                                                      Dishes_Info.Peeled = Get_ES_Val();
+ 134   5                                                      //sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
+ 135   5                                                      //
+ 136   5                                                      Send_String(str);
+ 137   5                                                      LcdShowStr(0x80,"  name:Peeled  ");
+ 138   5                                                      
+ 139   5                                                      sprintf(str, "val:%2.3f      ",Dishes_Info.Peeled);     
+ 140   5                                                      LcdShowStr(0x80 + 0x40,str);    
+ 141   5                                              }
+ 142   4                                      break;
+ 143   4                                      default :break;
+ 144   4                              }
  145   3                              
- 146   3                      }
- 147   2                      
- 148   2                      Delay200ms();
- 149   2      
- 150   2              }
- 151   1      }
- 152          
- 153          static void lcd_display(void)
- 154          {
- 155   1              LcdInit();      
- 156   1              LcdShowStr(0x80 ,"   Welcome use  ");
- 157   1              LcdShowStr(0x80 + 0x40 ,"Electronic scale");
- 158   1              Delay200ms();
- 159   1              Delay200ms();
- 160   1              LcdShowStr(0x80 ,"  class: b16   ");
- 161   1              LcdShowStr(0x80+ 0x40," name: W X D");
- 162   1              Delay200ms();
- 163   1              Delay200ms();
- 164   1      }
- 165          
- 166          static void bsp_init(void)
- 167          {
- 168   1              lcd_display();
- 169   1              Timer0Init();
- 170   1              UartInit();
- 171   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)1, Dishes_Info.weight, (int)Dishes_I
+ 146   3                              
+ 147   3                              
+ 148   3                      }
+ 149   2                      
+ 150   2                      Delay200ms();
+ 151   2      
+ 152   2              }
+ 153   1      }
+ 154          
+ 155          static void lcd_display(void)
+ 156          {
+ 157   1              LcdInit();      
+ 158   1              LcdShowStr(0x80 ,"   Welcome use  ");
+ 159   1              LcdShowStr(0x80 + 0x40 ,"Electronic scale");
+ 160   1              Delay200ms();
+ 161   1              Delay200ms();
+ 162   1              LcdShowStr(0x80 ,"  class: b16   ");
+ 163   1              LcdShowStr(0x80+ 0x40," name: W X D");
+ 164   1              Delay200ms();
+ 165   1              Delay200ms();
+ 166   1      }
+ 167          
+ 168          static void bsp_init(void)
+ 169          {
+ 170   1              lcd_display();
+ 171   1              Timer0Init();
+ 172   1              UartInit();
+ 173   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)1, Dishes_Info.weight, (int)Dishes_I
              -nfo.Num, Dishes_Info.money);
- 172   1              Send_String(str);
- 173   1      
- 174   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)2, Dishes_Info.weight, (int)Dishes_I
-             -nfo.Num, Dishes_Info.money);
- 175   1              Send_String(str);
-C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 15:57:34 PAGE 4   
+ 174   1              Send_String(str);
+ 175   1      
+ 176   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)2, Dishes_Info.weight, (int)Dishes_I
+C51 COMPILER V9.60.0.0   BSP_MAIN                                                          03/28/2020 20:44:48 PAGE 4   
 
- 176   1                              
- 177   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)3, Dishes_Info.weight, (int)Dishes_I
              -nfo.Num, Dishes_Info.money);
- 178   1              Send_String(str);
- 179   1      
- 180   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)4, Dishes_Info.weight, (int)Dishes_I
+ 177   1              Send_String(str);
+ 178   1                              
+ 179   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)3, Dishes_Info.weight, (int)Dishes_I
              -nfo.Num, Dishes_Info.money);
- 181   1              Send_String(str);       
- 182   1      }
- 183          
- 184          
+ 180   1              Send_String(str);
+ 181   1      
+ 182   1              sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)4, Dishes_Info.weight, (int)Dishes_I
+             -nfo.Num, Dishes_Info.money);
+ 183   1              Send_String(str);       
+ 184   1      }
  185          
  186          
  187          
@@ -234,11 +234,13 @@ line level    source
  213          
  214          
  215          
+ 216          
+ 217          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1087    ----
-   CONSTANT SIZE    =    323    ----
+   CODE SIZE        =   1118    ----
+   CONSTANT SIZE    =    373    ----
    XDATA SIZE       =    127    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     18       3
