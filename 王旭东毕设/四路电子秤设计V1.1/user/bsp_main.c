@@ -16,12 +16,6 @@ xdata Dishes Dishes_temp[] ={
 
 Info Dishes_Info = {0,0,2.2,0,0,0};
 
-//xdata Info Dishes_Info_[4] = {
-//{0,2.2,0,0},
-//{0,2.2,0,0},
-//{0,2.2,0,0},
-//{0,2.2,0,0},};
-
 void Delay200ms()		//@11.0592MHz
 {
 	unsigned char i, j, k;
@@ -39,27 +33,24 @@ void Delay200ms()		//@11.0592MHz
 }
 
 
-
-void lcd_display(void);
-char xdata str[25] = 0;
+static void bsp_init(void);
+static void lcd_display(void);
+char xdata str[50] = 0;
 void main(void)
 {
 	unsigned char key = 0;
 	uint8_t flag = 0,flag_temp = 0;
-	lcd_display();
-	Timer0Init();
-	UartInit();
+	bsp_init();
 	while(1)
 	{
 		key = Get_KeyPad() ;
 		Dishes_Info.weight = Get_ES_Val() - Dishes_Info.Peeled;
-		//sprintf(str, "电压值:%f, key:%c\n",Dishes_Info.weight,key);
-		sprintf(str, "%f\n",Dishes_Info.weight);
+		sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)(Dishes_Info.WhichES + 1), Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
 		Send_String(str);
 		if(flag < 4)
 		{
 			
-			sprintf(str, "WE:%01.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
+			sprintf(str, "WE:%05.3f PR:%04.1f",Dishes_Info.weight,Dishes_Info.price);
 			LcdShowStr(0x80,str);
 			Dishes_Info.money = Dishes_Info.weight * Dishes_Info.price;
 			sprintf(str, "MONEY:%06.2fNo:%d", Dishes_Info.money, (int)Dishes_Info.Num);
@@ -113,8 +104,8 @@ void main(void)
 				{
 					Dishes_Info.price = Dishes_temp[key-'0'].price;
 					Dishes_Info.Num = key - '0';
-					sprintf(str, "菜名:%s, 单价:%2.1f\n",Dishes_temp[key-'0'].DisheName, Dishes_Info.price);
-					Send_String(str);
+					//sprintf(str, "菜名:%s, 单价:%2.1f\n",Dishes_temp[key-'0'].DisheName, Dishes_Info.price);
+					//Send_String(str);
 					
 					sprintf(str, " name:%s",Dishes_temp[key-'0'].DisheName);
 					LcdShowStr(0x80,str);
@@ -138,7 +129,8 @@ void main(void)
 					if(key != 'S')
 					{
 						Dishes_Info.Peeled = Get_ES_Val();
-						sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
+						//sprintf(str, "Peeled:%f01.3", Dishes_Info.Peeled);
+						//
 						Send_String(str);
 						LcdShowStr(0x80,"  name:Peeled  ");
 						
@@ -158,7 +150,7 @@ void main(void)
 	}
 }
 
-void lcd_display(void)
+static void lcd_display(void)
 {
 	LcdInit();	
 	LcdShowStr(0x80 ,"   Welcome use  ");
@@ -169,6 +161,24 @@ void lcd_display(void)
 	LcdShowStr(0x80+ 0x40," name: W X D");
 	Delay200ms();
 	Delay200ms();
+}
+
+static void bsp_init(void)
+{
+	lcd_display();
+	Timer0Init();
+	UartInit();
+	sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)1, Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
+	Send_String(str);
+
+	sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)2, Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
+	Send_String(str);
+			
+	sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)3, Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
+	Send_String(str);
+
+	sprintf(str, "通道号:%d,重量:%05.3fkg,菜品编号:%d,总价:%06.2f;",(int)4, Dishes_Info.weight, (int)Dishes_Info.Num, Dishes_Info.money);
+	Send_String(str);	
 }
 
 
