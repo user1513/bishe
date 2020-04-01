@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "led.h": "c",
+        "bsp.h": "c",
+        "timer.h": "c",
+        "bsp_dht22.h": "c",
+        "bsp_dhtxx.h": "c",
+        "oled.h": "c",
+        "stdlib.h": "c",
+        "oledfont.h": "c",
+        "delay.h": "c",
+        "bsp_buzzer.h": "c"
+    }
+}
