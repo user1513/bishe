@@ -48,3 +48,5 @@
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_oled.h
 ..\obj\bsp_dhtxx.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_buzzer.h
+..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_swi2c.h
+..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_sgp30.h

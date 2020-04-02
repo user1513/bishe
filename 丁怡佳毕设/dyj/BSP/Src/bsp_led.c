@@ -21,8 +21,6 @@ void bspLedInit(void)
 	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;//LED0和LED1对应IO口
 	
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;//推挽输出
-	
 	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIO
 	
 	GPIO_SetBits(GPIOC,GPIO_Pin_0);//GPIOF9,F10设置高，灯灭

@@ -5,6 +5,9 @@
 #define DHT22TIMEOUTFLAG    (1 << 1)/*DHT22超时标志位*/
 #define OLEDTIMEOUTFLAG     (1 << 2)/*OLED超时标志位*/
 
+
+
+
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
@@ -14,6 +17,9 @@
 #include "bsp_dhtxx.h"
 #include "bsp_oled.h"
 #include "bsp_buzzer.h"
+#include "bsp_swi2c.h"
+#include "bsp_sgp30.h"
+
 void bspInit(void);
 
 #endif

@@ -4,6 +4,8 @@ uint8_t g_ucStateFlag = 0xff;		/*全局状态标志位*/
 
 uint8_t g_uctStr[17];				/*sprintf专用数组*/
 
+extern uint8_t g_ucTable[];
+
 int main(void)
 { 
 	bspInit();
@@ -30,10 +32,20 @@ int main(void)
 			FS0 = !FS0;
 			bspBeepEnable();
 			TIM_Cmd(TIM3,DISABLE); //失能定时器3
+			bsp_sgp30_test();
+			printf("TVOC:%d,CO2:%d\n",(g_ucTable[0]<<8) + g_ucTable[1],(g_ucTable[3]<<8) + g_ucTable[4]);
+			
+			sprintf((char*)g_uctStr, "CO2:%05d ppb",(g_ucTable[3]<<8) + g_ucTable[4]);
 
+			OLED_ShowString(0, 4, g_uctStr, 16,0);
+			
+			sprintf((char*)g_uctStr, "TVOC:%05d ppb",(g_ucTable[0]<<8) + g_ucTable[1]);
+
+			OLED_ShowString(0, 6, g_uctStr, 16,0);
+			
 			if(DHTxx_Get_Data(DHT22_Tab) == 0)
 			{
-				printf("%lf,%lf\n",DHT22_Tab[0],DHT22_Tab[1]);
+				printf("HUM:%lf,TEMP:%lf\n",DHT22_Tab[0],DHT22_Tab[1]);
 
 				sprintf((char*)g_uctStr, "HUM:%.1lf %%",DHT22_Tab[0]);
 

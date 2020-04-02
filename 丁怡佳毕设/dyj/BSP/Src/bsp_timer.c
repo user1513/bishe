@@ -41,7 +41,7 @@ uint16_t g_usLedTimeout = 0;		//LED闪烁间隔计数器
 #define LEDTIMEOUT 500				//LED闪烁间隔500MS
 
 uint16_t g_usOledTimeout = 0;		//Oled update时间计数器
-#define OLEDTIMEOUT 1500				//Oled 更新画面间隔500MS
+#define OLEDTIMEOUT 1000				//Oled 更新画面间隔500MS
 
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)

@@ -9,6 +9,8 @@
         "stdlib.h": "c",
         "oledfont.h": "c",
         "delay.h": "c",
-        "bsp_buzzer.h": "c"
+        "bsp_buzzer.h": "c",
+        "bsp_swi2c.h": "c",
+        "bsp_sgp30.h": "c"
     }
 }

@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\BSP\Inc</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\FWLIB\inc;..\BSP\Inc;..\USMART</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,6 +437,16 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\Src\bsp_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_swi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\Src\bsp_swi2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_sgp30.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\Src\bsp_sgp30.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -531,6 +541,26 @@
               <FileName>readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USMART</GroupName>
+          <Files>
+            <File>
+              <FileName>usmart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>usmart_str.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USMART\usmart_str.c</FilePath>
             </File>
           </Files>
         </Group>

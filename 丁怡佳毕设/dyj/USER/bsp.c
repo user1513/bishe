@@ -20,5 +20,6 @@ void bspInit(void)
 
 	bspBuzzerFreq(50, 1500);		/*蜂鸣器跳变周期100ms,总响应时间为5000ms*/
 
+	bsp_sgp30_io_init();
 }
 
