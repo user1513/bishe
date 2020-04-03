@@ -49,3 +49,4 @@
 ..\obj\main.o: ..\BSP\Inc\bsp_buzzer.h
 ..\obj\main.o: ..\BSP\Inc\bsp_swi2c.h
 ..\obj\main.o: ..\BSP\Inc\bsp_sgp30.h
+..\obj\main.o: ..\BSP\Inc\CRC.h

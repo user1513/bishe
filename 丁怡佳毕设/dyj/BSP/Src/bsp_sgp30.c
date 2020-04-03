@@ -1,6 +1,8 @@
 #include "bsp_sgp30.h"
 #include "bsp.h"
 
+/*定义bsp_swi2c.h内的Swi2c_T结构体变量*/
+
 Swi2c_T t_sgp30_swi2c ={
 	(unsigned long *)&SGP30_I2C_SCL,
 	(unsigned long *)&SGP30_I2C_SDA_OUT,
@@ -8,6 +10,11 @@ Swi2c_T t_sgp30_swi2c ={
 	bsp_sgp30_in,
 	bsp_sgp30_out
 };
+
+/*定义crc.h内的CRC_8结构体变量*/
+
+CRC_8 g_sgp30_crc8 = {0x31, 0xff, 0x00, FALSE, FALSE}; 
+
 
 static void bsp_sgp30_out(void);
 
@@ -108,7 +115,7 @@ static void bsp_sgp30_read_data(uint8_t* _ucTable, uint8_t length)
 								
 }
 
-
+/*sgp30传感器状态初始化*/
 
 static void bsp_sgp30_sensor_init(void)
 {
@@ -121,6 +128,17 @@ static void bsp_sgp30_sensor_init(void)
 
 uint8_t g_ucTable[6] = {0};
 
+
+/******************************
+**获取sgp30 MEASURE_AIR_QUALITY 的6位数据 
+**6位数据数据格式
+** xx xx xx xx xx xx
+** co2
+*********crc
+************tvoc
+*****************crc		
+*******************************/
+
 void bsp_sgp30_test(void)
 {
     bsp_sgp30_header(0);
@@ -129,7 +147,7 @@ void bsp_sgp30_test(void)
 	
 	swi2cStop(&t_sgp30_swi2c);
 	
-	delay_ms(100);
+	delay_ms(100);		/*需要一点时间的等待*/
 	
 	bsp_sgp30_header(1);
 
@@ -137,7 +155,20 @@ void bsp_sgp30_test(void)
 	
 	swi2cStop(&t_sgp30_swi2c);
 
-	
+	/*检测crc检验值*/
+
+	if((crc8(g_ucTable, 2, &g_sgp30_crc8) != g_ucTable[2]) ||
+	   (crc8(g_ucTable + 3, 2, &g_sgp30_crc8) != g_ucTable[5]))
+	{
+		/*将数组清零*/
+		memset(g_ucTable, 0, 6);
+	}
+}
+
+/*启动片上湿度补偿*/
+void bsp_sgp30_humidity_compensation(void)
+{
+
 }
 
 

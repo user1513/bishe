@@ -20,6 +20,9 @@
 #include "bsp_swi2c.h"
 #include "bsp_sgp30.h"
 
+
+#include "CRC.h" /*CRC8_CRC16_CRC32ºÏ—È*/
+
 void bspInit(void);
 
 #endif

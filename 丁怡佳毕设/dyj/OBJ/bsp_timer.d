@@ -50,3 +50,4 @@
 ..\obj\bsp_timer.o: ..\BSP\Inc\bsp_buzzer.h
 ..\obj\bsp_timer.o: ..\BSP\Inc\bsp_swi2c.h
 ..\obj\bsp_timer.o: ..\BSP\Inc\bsp_sgp30.h
+..\obj\bsp_timer.o: ..\BSP\Inc\CRC.h
