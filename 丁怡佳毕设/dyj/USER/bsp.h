@@ -4,7 +4,7 @@
 #define LEDTIMEOUTFLAG      (1 << 0)/*LED超时标志位*/
 #define DHT22TIMEOUTFLAG    (1 << 1)/*DHT22超时标志位*/
 #define OLEDTIMEOUTFLAG     (1 << 2)/*OLED超时标志位*/
-
+#define SGP30TIMEOUTFLAG    (1 << 3)/*OLED超时标志位*/
 
 
 

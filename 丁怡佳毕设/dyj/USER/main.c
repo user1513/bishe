@@ -4,7 +4,9 @@ uint8_t g_ucStateFlag = 0xff;		/*全局状态标志位*/
 
 uint8_t g_uctStr[17];				/*sprintf专用数组*/
 
-extern uint8_t g_ucTable[];
+extern uint8_t g_ucaTable[];
+
+//double h = 40.0f,t = 91.0f;
 
 int main(void)
 { 
@@ -16,11 +18,14 @@ int main(void)
 	FS0 = 0;
 	while(1)
 	{
+		
 		if(!(g_ucStateFlag & LEDTIMEOUTFLAG))//LED超时标志位被清零
 		{
 			g_ucStateFlag |= LEDTIMEOUTFLAG;
 
 			bspLedFlash();
+			
+			//printf("GetAbsolutehumidity:%f\n", GetAbsolutehumidity(t, h));
 			//EventStopA(0);
 		}
 
@@ -32,14 +37,12 @@ int main(void)
 			FS0 = !FS0;
 			bspBeepEnable();
 			TIM_Cmd(TIM3,DISABLE); //失能定时器3
-			bsp_sgp30_test();
-			printf("TVOC:%d,CO2:%d\n",(g_ucTable[3]<<8) + g_ucTable[4],(g_ucTable[0]<<8) + g_ucTable[1]);
 			
-			sprintf((char*)g_uctStr, "CO2:%05d ppb",(g_ucTable[0]<<8) + g_ucTable[1]);
+			sprintf((char*)g_uctStr, "CO2:%05d ppb",(g_ucaTable[0]<<8) + g_ucaTable[1]);
 
 			OLED_ShowString(0, 4, g_uctStr, 16,0);
 			
-			sprintf((char*)g_uctStr, "TVOC:%05d ppb",(g_ucTable[3]<<8) + g_ucTable[4]);
+			sprintf((char*)g_uctStr, "TVOC:%05d ppb",(g_ucaTable[3]<<8) + g_ucaTable[4]);
 
 			OLED_ShowString(0, 6, g_uctStr, 16,0);
 			
@@ -54,16 +57,34 @@ int main(void)
 				sprintf((char*)g_uctStr, "TEMP:%.1lf ℃",DHT22_Tab[1]);
 
 				OLED_ShowString(0, 2, g_uctStr, 16,0);
+				
+				/*设置sgp30绝对湿度值*/
+				
+				bsp_sgp30_humidity_compensation(DHT22_Tab[1], DHT22_Tab[0]);
 			}
 			TIM_Cmd(TIM3,ENABLE); //使能定时器3
 		}
 
-		if(!(g_ucStateFlag & OLEDTIMEOUTFLAG))//OLE超时更新标志位被清零
+		if(!(g_ucStateFlag & OLEDTIMEOUTFLAG))//OLED超时更新标志位被清零
 		{
 			g_ucStateFlag |= OLEDTIMEOUTFLAG;
 
 			//EventStopB(0);
 		}
+
+
+		if(!(g_ucStateFlag & SGP30TIMEOUTFLAG))//SGP30超时更新标志位被清零
+		{
+			g_ucStateFlag |= SGP30TIMEOUTFLAG;
+
+			bsp_sgp30_test();
+
+			printf("TVOC:%d,CO2:%d\n",(g_ucaTable[3]<<8) + g_ucaTable[4],(g_ucaTable[0]<<8) + g_ucaTable[1]);
+
+			//EventStopB(0);
+		}
+
+		
 	}
 }
 

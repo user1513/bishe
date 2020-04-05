@@ -190,6 +190,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>g_ucTable</ItemText>
         </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>h</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>t</ItemText>
+        </Ww>
       </WatchWindow1>
       <ScvdPack>
         <Filename>F:\Keil_v5\F\Keil_v5\Arm\Packs\Keil\ARM_Compiler\1.6.2\EventRecorder.scvd</Filename>

@@ -34,5 +34,7 @@ void bsp_sgp30_out(void);
 
 void bsp_sgp30_in(void);
 
+void bsp_sgp30_humidity_compensation(double _fTemp, double _fHum);
+
 #endif
 

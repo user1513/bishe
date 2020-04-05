@@ -41,7 +41,10 @@ uint16_t g_usLedTimeout = 0;		//LED闪烁间隔计数器
 #define LEDTIMEOUT 500				//LED闪烁间隔500MS
 
 uint16_t g_usOledTimeout = 0;		//Oled update时间计数器
-#define OLEDTIMEOUT 1000				//Oled 更新画面间隔500MS
+#define OLEDTIMEOUT 1500				//Oled 更新画面间隔500MS
+
+uint16_t g_usSgp30Timeout = 0;		//Oled update时间计数器
+#define SGP30TIMEOUT 1000				//Oled 更新画面间隔500MS
 
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)
@@ -80,6 +83,17 @@ void TIM3_IRQHandler(void)
 			
 			g_ucStateFlag &= ~OLEDTIMEOUTFLAG;//将第二位清零
 		}
+
+
+		g_usSgp30Timeout++;
+
+		if(g_usSgp30Timeout > SGP30TIMEOUT)  //计数器超出设定
+		{
+			g_usSgp30Timeout = 0;
+			
+			g_ucStateFlag &= ~SGP30TIMEOUTFLAG;//将第三位清零
+		}
+
 
 		bspBeepHandler(); 				/*beep蜂鸣器处理函数*/
 	
