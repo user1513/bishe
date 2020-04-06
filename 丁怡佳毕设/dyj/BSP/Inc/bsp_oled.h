@@ -68,7 +68,8 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p,u8 size, u8 mode);
 /*------------------------------------------------------------*/
 void OLED_Clear_static(u8 state, u8 start, u8 end);
 void OLED_Set_Pos(unsigned char x, unsigned char y);
-void OLED_ShowCHinese(u8 x,u8 y,u8 no);
+void OLED_show_chinese(u8 x,u8 y,u8 no);//显示单个汉字
+void OLED_show_chinese_length(u8 x,u8 y,u8 no, uint8_t length);//显示多个汉字
 void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,const unsigned char BMP[]);
 void Delay_50ms(unsigned int Del_50ms);
 void Delay_1ms(unsigned int Del_1ms);

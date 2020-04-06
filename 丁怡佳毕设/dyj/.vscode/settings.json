@@ -12,6 +12,10 @@
         "bsp_buzzer.h": "c",
         "bsp_swi2c.h": "c",
         "bsp_sgp30.h": "c",
-        "crc.h": "c"
+        "crc.h": "c",
+        "bsp_pwm.h": "c",
+        "bsp_adc.h": "c",
+        "bsp_oled.h": "c",
+        "sys.h": "c"
     }
 }

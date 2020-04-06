@@ -50,6 +50,8 @@
 ..\obj\bsp_sgp30.o: ..\BSP\Inc\bsp_buzzer.h
 ..\obj\bsp_sgp30.o: ..\BSP\Inc\bsp_swi2c.h
 ..\obj\bsp_sgp30.o: ..\BSP\Inc\bsp_sgp30.h
+..\obj\bsp_sgp30.o: ..\BSP\Inc\bsp_pwm.h
+..\obj\bsp_sgp30.o: ..\BSP\Inc\bsp_adc.h
 ..\obj\bsp_sgp30.o: ..\BSP\Inc\CRC.h
 ..\obj\bsp_sgp30.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
 ..\obj\bsp_sgp30.o: F:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

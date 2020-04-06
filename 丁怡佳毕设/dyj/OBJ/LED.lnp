@@ -12,6 +12,7 @@
 "..\obj\bsp_swi2c.o"
 "..\obj\bsp_sgp30.o"
 "..\obj\crc.o"
+"..\obj\bsp_pwm.o"
 "..\obj\delay.o"
 "..\obj\sys.o"
 "..\obj\usart.o"

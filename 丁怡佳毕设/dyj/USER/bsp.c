@@ -20,6 +20,13 @@ void bspInit(void)
 
 	bspBuzzerFreq(50, 1500);		/*蜂鸣器跳变周期100ms,总响应时间为5000ms*/
 
-	bsp_sgp30_io_init();
+	bsp_sgp30_io_init();			/*sgp30传感器外设初始化*/
+
+	bsp_adc_init();					/*adc1通道0初始化*/
+
+	TIM2_PWM_Init(999, 839);		/*PWM周期初始化*/
+
+	TIM_SetCompare2(TIM2, 32);			/*PWM占空比初始化*/
+
 }
 

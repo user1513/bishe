@@ -19,7 +19,8 @@
 #include "bsp_buzzer.h"
 #include "bsp_swi2c.h"
 #include "bsp_sgp30.h"
-
+#include "bsp_pwm.h"
+#include "bsp_adc.h"
 
 #include "CRC.h" /*CRC8_CRC16_CRC32ºÏ—È*/
 

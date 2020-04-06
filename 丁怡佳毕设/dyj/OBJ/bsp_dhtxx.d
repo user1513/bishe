@@ -50,4 +50,6 @@
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_buzzer.h
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_swi2c.h
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_sgp30.h
+..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_pwm.h
+..\obj\bsp_dhtxx.o: ..\BSP\Inc\bsp_adc.h
 ..\obj\bsp_dhtxx.o: ..\BSP\Inc\CRC.h

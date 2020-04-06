@@ -34,17 +34,17 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 }
 extern uint8_t g_ucStateFlag;
 
-uint16_t g_usDht22Timeout = 0;		//DHT22间隔计数器
-#define DHT22TIMEOUT 2000			//DHT22间隔2000MS
+uint16_t g_usDht22Timeout = 0;			//DHT22间隔计数器
+#define DHT22TIMEOUT 2000				//DHT22间隔2000MS
 
-uint16_t g_usLedTimeout = 0;		//LED闪烁间隔计数器
-#define LEDTIMEOUT 500				//LED闪烁间隔500MS
+uint16_t g_usLedTimeout = 0;			//LED闪烁间隔计数器
+#define LEDTIMEOUT 500					//LED闪烁间隔500MS
 
-uint16_t g_usOledTimeout = 0;		//Oled update时间计数器
-#define OLEDTIMEOUT 1500				//Oled 更新画面间隔500MS
+uint16_t g_usOledTimeout = 0;			//Oled update时间计数器
+#define OLEDTIMEOUT 500					//Oled 更新画面间隔500MS
 
-uint16_t g_usSgp30Timeout = 0;		//Oled update时间计数器
-#define SGP30TIMEOUT 1000				//Oled 更新画面间隔500MS
+uint16_t g_usSgp30Timeout = 0;			//Sgp30 update时间计数器
+#define SGP30TIMEOUT 1000				//Sgp30 更新画面间隔1000MS
 
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)

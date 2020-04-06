@@ -425,41 +425,54 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p,u8 size, u8 mode)
 //	return 1;	
 //}
 
-//显示汉字
-//void OLED_ShowCHinese(u8 x,u8 y,u8 no)
-//{      			    
-//	u8 t,adder=0;
-//	OLED_Set_Pos(x,y);	
-//    for(t=0;t<16;t++)
-//		{
-//				OLED_WR_Byte(Hzk[2*no][t],OLED_DATA);
-//				adder+=1;
-//     }	
-//		OLED_Set_Pos(x,y+1);	
-//    for(t=0;t<16;t++)
-//			{	
-//				OLED_WR_Byte(Hzk[2*no+1][t],OLED_DATA);
-//				adder+=1;
-//      }					
-//}
-
-int OLED_Show_32_char(u8 x,u8 y,const u8 *able)
-{
-	unsigned char i=0;	
+//显示单个汉字
+void OLED_show_chinese(u8 x,u8 y,u8 no)
+{      			    
+	u8 t;
 	OLED_Set_Pos(x,y);	
-	for(i=0;i<32;i++)
-		OLED_WR_Byte(able[i],OLED_DATA);
-	OLED_Set_Pos(x,y+1);
-	for(i=0;i<32;i++)
-		OLED_WR_Byte(able[32 + i],OLED_DATA);
-	OLED_Set_Pos(x,y+2);	
-	for(i=0;i<32;i++)
-		OLED_WR_Byte(able[32 * 2 + i],OLED_DATA);
-	OLED_Set_Pos(x,y+3);
-	for(i=0;i<32;i++)
-		OLED_WR_Byte(able[32 * 3 + i],OLED_DATA);
-	return 1;	
+	for(t=0;t<16;t++)
+	{
+		OLED_WR_Byte(Hzk[no][t],OLED_DATA);
+	}	
+	OLED_Set_Pos(x,y+1);	
+	for(t=0;t<16;t++)
+	{	
+		OLED_WR_Byte(Hzk[no][t + 16],OLED_DATA);
+	}					
 }
+
+//显示多个汉字
+void OLED_show_chinese_length(u8 x,u8 y,u8 no, uint8_t length)
+{     
+	while(length--)
+	{ 			    
+		if(x > 127)
+		{
+			x -= 128;
+			y += 2;
+		} 
+		OLED_show_chinese(x, y, no++);
+		x += 16;
+	}
+}
+
+// int OLED_Show_32_char(u8 x,u8 y,const u8 *able)
+// {
+// 	unsigned char i=0;	
+// 	OLED_Set_Pos(x,y);	
+// 	for(i=0;i<32;i++)
+// 		OLED_WR_Byte(able[i],OLED_DATA);
+// 	OLED_Set_Pos(x,y+1);
+// 	for(i=0;i<32;i++)
+// 		OLED_WR_Byte(able[32 + i],OLED_DATA);
+// 	OLED_Set_Pos(x,y+2);	
+// 	for(i=0;i<32;i++)
+// 		OLED_WR_Byte(able[32 * 2 + i],OLED_DATA);
+// 	OLED_Set_Pos(x,y+3);
+// 	for(i=0;i<32;i++)
+// 		OLED_WR_Byte(able[32 * 3 + i],OLED_DATA);
+// 	return 1;	
+// }
 
 
 /********************************************

@@ -309,9 +309,11 @@ void bsp_sgp30_humidity_compensation(double _fTemp, double _fHum)
 
 	printf("GetAbsolutehumidity:%0.3f\n", fTmp);
 
-	if(fTmp == 0 && fTmp > 255)
+	if(fTmp == 0)
 		return;
 	
+	if(fTmp > 255)
+		fTmp = 255; 
 	/*获取整数部分*/
 	g_ucaI2cSend[0] =  (int)fTmp;	
 	
