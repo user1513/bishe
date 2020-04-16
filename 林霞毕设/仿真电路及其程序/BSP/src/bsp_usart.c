@@ -32,28 +32,28 @@ void SendByte(unsigned char byte)
 /*****************************************************************************
 ×Ö·û´®·¢ËÍº¯Êý
 /****************************************************************************/
-void Send_String(unsigned char *str)		
-{
-	while(*str != '\0')		
-	{
-		SendByte(*str);			
-		str++;		
-	}			  
-}
+//void Send_String(unsigned char *str)		
+//{
+//	while(*str != '\0')		
+//	{
+//		SendByte(*str);			
+//		str++;		
+//	}			  
+//}
 
 /*****************************************************************************
 ×Ö·û´®·¢ËÍº¯Êý
 /****************************************************************************/
-void Send_String_Len(unsigned char *str, unsigned char Len)		
-{
-	int i = 0;
-	for(i = 0; i < Len; i++)
-	{
-		SendByte(*str);	
-		str++;
-	}
-								  
-}
+//void Send_String_Len(unsigned char *str, unsigned char Len)		
+//{
+//	int i = 0;
+//	for(i = 0; i < Len; i++)
+//	{
+//		SendByte(*str);	
+//		str++;
+//	}
+//								  
+//}
 
 
 

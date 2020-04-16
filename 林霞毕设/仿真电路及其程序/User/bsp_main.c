@@ -16,15 +16,14 @@ void Delay200ms()		//@11.0592MHz
 	} while (--i);
 }
 
-
-
-
 void lcd_display(void);
-extern uint8_t showflag;
+
+extern uint8_t timeout;
+
 void main(void)
 {
     xdata float _fhumi,_ftemp;
-	
+	uint8_t showflag = 0;
 	static uint8_t time_flag = 0;
 	static float humi_flag = 0;
 	static float temp_flag = 0;
@@ -40,7 +39,17 @@ void main(void)
 	ds1302_write_time(); //写入初始值
 	while(1)
 	{
-        switch(showflag){
+		if(!(timeout%10))
+		{
+		vAutoGetSht11(1);			//自动获取sht11温湿度数据
+		ds1302ShowTime(); 			//获取ds1302时间
+		}
+		if(timeout>=50)
+		{
+			timeout = 0;
+			showflag++;
+		}
+        switch(showflag%2){
 			case 0:
 				_fhumi = fGetHumi();
 				_ftemp = fGetTemp();

@@ -8,20 +8,20 @@
 * 说    名         : 该函数是在12MHZ晶振下，12分频单片机的延时。
 *******************************************************************************/
 
-void Delay1ms(uchar z)		//@11.0592MHz
-{
-	unsigned char i, j,k;
-	for(k=0;k<z;k++)
-	{
-		_nop_();
-		i = 2;
-		j = 199;
-		do
-		{
-			while (--j);
-		} while (--i);
-	}
-}
+//void Delay1ms(uchar z)		//@11.0592MHz
+//{
+//	unsigned char i, j,k;
+//	for(k=0;k<z;k++)
+//	{
+//		_nop_();
+//		i = 2;
+//		j = 199;
+//		do
+//		{
+//			while (--j);
+//		} while (--i);
+//	}
+//}
 
 void Delay100us()		//@11.0592MHz
 {

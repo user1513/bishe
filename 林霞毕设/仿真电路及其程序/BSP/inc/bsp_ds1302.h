@@ -28,4 +28,5 @@ void ds1302_init(void);
 void ds1302_write_time(void) ;
 //从DS302读出时钟数据
 void ds1302_read_time(void) ;
+uint8_t ds1302ShowTime(void);
 #endif

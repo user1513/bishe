@@ -8,7 +8,7 @@ static char s_measure(unsigned char *p_value, unsigned char *p_checksum, unsigne
 static void calc_dht90(float *p_humidity ,float *p_temperature);//温湿度补偿
 
 
-float fHumi = 0,fTemp = 0;
+xdata float fHumi = 0,fTemp = 0;
 
 typedef union  
 { unsigned int i;      //定义了两个共用体
