@@ -1,0 +1,70 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              05/04/2020 20:04:21 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "app.h"
+   2          #include "NRF24L01.h"
+   3          #include "usart.h"
+   4          #include "timer.h"
+   5          
+   6          
+   7          uint8_t flag_hw = 0;
+   8          uint32_t STATE_FLAG = 0; //状态标志位
+   9          uint8_t delay_hw = 0;
+  10          
+  11          void main()
+  12          {
+  13   1              uint8_t data_ = 0, temp = 0;
+  14   1              P1M1=0x40;
+  15   1              P1M0=0x40;
+  16   1              //UartInit();
+  17   1              //NRF24L01初始化
+  18   1              init_io();                         //无线初始化IO
+  19   1              RX_Mode();                         //设置为接收模式
+  20   1              Timer0Init();
+  21   1              while(1)
+  22   1              {
+  23   2                      if(STATE_FLAG & (1 << 0 ))
+  24   2                      {
+  25   3                              STATE_FLAG &= ~(1 << 0);
+  26   3                              if(P16 == 1)
+  27   3                              {
+  28   4                                      //delay_hw = 20;
+  29   4                                      flag_hw = 1;
+  30   4                              }
+  31   3                              // else if(delay_hw != 0)
+  32   3                              // {
+  33   3                              //      delay_hw --;
+  34   3                              // }
+  35   3                              else
+  36   3                              {
+  37   4                                      flag_hw = 0;
+  38   4                              }
+  39   3                      }
+  40   2                              
+  41   2                      NRF24L01_Send();        
+  42   2                      
+  43   2              }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     66    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.60.0.0   MAIN                                                              05/04/2020 20:04:21 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

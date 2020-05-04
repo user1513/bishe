@@ -1,0 +1,110 @@
+C51 COMPILER V9.60.0.0   APP                                                               05/04/2020 23:25:55 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE APP
+OBJECT MODULE PLACED IN .\Objects\app.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE app.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\app.l
+                    -st) OBJECT(.\Objects\app.obj)
+
+line level    source
+
+   1          #include "app.h"
+   2          
+   3          extern const uint8_t code HZ_tab[][16];
+   4          
+   5          sbit buzzer = P3^7; 
+   6          sbit key = P2^7;
+   7          sbit LED = P3^6;
+   8          
+   9          uint8_t flag = 0;
+  10          uint8_t able[2] = {0};
+  11          
+  12          extern uint8_t key_val;
+  13          
+  14          void Delay1000ms()              //@11.0592MHz
+  15          {
+  16   1              unsigned char i, j, k;
+  17   1      
+  18   1              _nop_();
+  19   1              i = 8;
+  20   1              j = 1;
+  21   1              k = 243;
+  22   1              do
+  23   1              {
+  24   2                      do
+  25   2                      {
+  26   3                              while (--k);
+  27   3                      } while (--j);
+  28   2              } while (--i);
+  29   1      }
+  30          
+  31          
+  32          int main(void)
+  33          {
+  34   1              int i = 0;
+  35   1              
+  36   1              buzzer = 1;
+  37   1              LED = 1;
+  38   1              InitLcd(); 
+  39   1              LED_ShowString(0, 0, "****************");
+  40   1              LCD_ShowChinaLanguage(2 ,0 , &HZ_tab[0][0], 8);
+  41   1              LCD_ShowChinaLanguage(4 ,0 , &HZ_tab[8*2][0], 8);
+  42   1              LED_ShowString(6, 0, "****************");
+  43   1              
+  44   1              Delay1000ms();
+  45   1              Delay1000ms();
+  46   1              SetClear();
+  47   1              LCD_ShowChinaLanguage(0 ,0 , &HZ_tab[16*2][0], 5); //姓名：丁琴
+  48   1              LCD_ShowChinaLanguage(2 ,0 , &HZ_tab[21*2][0], 3);//学号：
+  49   1              LED_ShowString(2, 6, "160211202");
+  50   1              LCD_ShowChinaLanguage(4 ,0 , &HZ_tab[24*2][0], 8);
+  51   1              LCD_ShowChinaLanguage(6 ,0 , &HZ_tab[40*2][0], 5);
+  52   1              
+  53   1              Timer0Init();
+  54   1              uart_init();
+C51 COMPILER V9.60.0.0   APP                                                               05/04/2020 23:25:55 PAGE 2   
+
+  55   1              while(1)
+  56   1              {
+  57   2                              
+  58   2                              if(flag == 1) // 如果收到数据 
+  59   2                      { 
+  60   3                                      ES = 0; //关闭串口中断
+  61   3      
+  62   3                                      flag = 0; //标志位清零
+  63   3                                      for(i = 0; i < 2; i++)
+  64   3                              {
+  65   4                                      SBUF = *(able + i); //将收到的数据发送至缓冲区 
+  66   4      
+  67   4                                      while(!TI); //等待数据发送结束
+  68   4              
+  69   4                                      TI=0; // 将发送结束标志清零
+  70   4                              }
+  71   3                              if(able[0] == 'O' && able[1] == 'K')
+  72   3                              {
+  73   4                                      LCD_ShowChinaLanguage(4 ,0 , &HZ_tab[32*2][0], 8);
+  74   4                              }
+  75   3                              else
+  76   3                              {
+  77   4                                      LCD_ShowChinaLanguage(4 ,0 , &HZ_tab[24*2][0], 8);
+  78   4                              }
+  79   3                              if(able[0] == 'O' && able[1] == 'K'&&key_val == 1) {buzzer = 0; LED = 0;}
+  80   3                              else if(able[0] == 'N' && able[1] == 'O'){buzzer = 1; LED = 1;}
+  81   3                                      ES=1; // 使能串口中断
+  82   3                      }
+  83   2              }
+  84   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    289    ----
+   CONSTANT SIZE    =     27    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
