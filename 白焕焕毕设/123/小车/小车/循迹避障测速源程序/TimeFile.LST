@@ -1,0 +1,64 @@
+C51 COMPILER V9.60.0.0   TIMEFILE                                                          05/03/2020 22:39:46 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TIMEFILE
+OBJECT MODULE PLACED IN TimeFile.OBJ
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE TimeFile.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /////////定时部分
+   2          
+   3          #include "std_for_wym.h"
+   4          
+   5          //bit bTime_50Ms = 0;
+   6          bit bTime_500Ms = 0;
+   7          bit time_1000ms = 0;
+   8          //定时器初始化函数
+   9          void InitTimer(void)
+  10          {
+  11   1              TMOD&=0X0F;
+  12   1              TMOD|=0X10;     //定时器0工作于方式1
+  13   1              TH1=0X4C;
+  14   1              TL1=0X00;       //50MS
+  15   1              ET1=1;          //打开定时器0
+  16   1              TR1=1;          //启动定时器0
+  17   1              EA=1;           //开总中断
+  18   1      }
+  19          
+  20          void Time1(void) interrupt 3   
+  21          {
+  22   1              //static char num;
+  23   1              static char num1;
+  24   1              TH1=0X4C;
+  25   1              TL1=0X00;       //50MS 11.0592MHz
+  26   1              //bTime_50Ms = 1;
+  27   1      //      if(++num >= 10)
+  28   1      //      {
+  29   1      //              num = 0;
+  30   1      //              bTime_500Ms = 1;
+  31   1      //      }
+  32   1              if(++num1 >= 20)
+  33   1              {
+  34   2                      num1 = 0;
+  35   2                      time_1000ms=1;
+  36   2              }
+  37   1      }
+  38          
+  39          
+  40          
+  41          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     70    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

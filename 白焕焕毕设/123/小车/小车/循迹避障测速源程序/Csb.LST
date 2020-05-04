@@ -1,0 +1,113 @@
+C51 COMPILER V9.60.0.0   CSB                                                               05/03/2020 22:39:45 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CSB
+OBJECT MODULE PLACED IN Csb.OBJ
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE Csb.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          #include "std_for_wym.h"
+   3          
+   4          sbit  RX = P3^3;
+   5          sbit  TX = P3^4;                                                      
+   6          static bit flag = 0;
+   7          
+   8          //触发一个高电平时间
+   9          static void  StartModule(void)                   //启动模块
+  10          {
+  11   1              TX=1;                                        //启动一次模块
+  12   1              _nop_();_nop_(); _nop_(); _nop_(); _nop_(); _nop_();_nop_(); 
+  13   1              _nop_();_nop_(); _nop_(); _nop_(); _nop_(); _nop_();_nop_(); 
+  14   1              _nop_();_nop_(); _nop_(); _nop_(); _nop_(); _nop_();_nop_(); 
+  15   1              TX=0;
+  16   1      }
+  17          
+  18          /*******************************************************************************
+  19          * Function Name  : Conut
+  20          * Description    : 取出定时器的值，并通过计算得到距离，返回距离到调用函数
+  21          * Input          : None
+  22          * Output         : None
+  23          * Return         : 计算得到的距离
+  24          * Attention              : 当距离大于5m时，返回3个8，表示超出量程
+  25          *******************************************************************************/
+  26          static int Conut(void)
+  27          {
+  28   1              uint S,time;
+  29   1              time=TH0*256+TL0;
+  30   1              TH0=0;
+  31   1              TL0=0;
+  32   1      
+  33   1              S=(time*1.7)/100;     //算出来是CM
+  34   1              if((S>=500)||flag==1) //超出测量范围 , 亲测可以达到6M多一点点，不过
+  35   1              {                     //跳动的很厉厉害，现改为5M
+  36   2                      flag = 0;
+  37   2                      S = 888;
+  38   2              }
+  39   1              return S;
+  40   1      }
+  41          
+  42          /*******************************************************************************
+  43          * Function Name  : GetDis
+  44          * Description    : 发出一个10us的高电平脉冲，得到超声波测出的距离
+  45          * Input          : None
+  46          * Output         : None
+  47          * Return         : S 测得的距离，Uint型变量，比如返回124，则表示为1.24M
+  48          * Attention              : 调用的函数有：StartModule，Conut
+  49          *******************************************************************************/
+  50          int GetDis(void)
+  51          {
+  52   1              StartModule();      //给一个高电平触发脉冲
+  53   1              while(!RX);                 //当RX为零时等待
+  54   1              TR0=1;                      //开启计数
+  55   1              while(RX);                      //当RX为1计数并等待
+C51 COMPILER V9.60.0.0   CSB                                                               05/03/2020 22:39:45 PAGE 2   
+
+  56   1              TR0=0;  
+  57   1              return Conut();         //计算
+  58   1      }
+  59          
+  60          //定时器初始化
+  61          static void Timer0Init(void)
+  62          {
+  63   1              TMOD &= 0xf0;
+  64   1              TMOD |= 0x01;      //设T0为方式1，
+  65   1              TH0=0;
+  66   1              TL0=0;          
+  67   1              ET0=1;             //允许T0中断
+  68   1              EA=1;                      //开启总中断 
+  69   1      }
+  70          /*******************************************************************************
+  71          * Function Name  : CsbInit
+  72          * Description    : 超声波初始化函数
+  73          * Input          : None
+  74          * Output         : None
+  75          * Return         : None
+  76          * Attention              : 调用的函数有：Timer0Init ,只调用了一个定时器初始化
+  77          *******************************************************************************/
+  78          void CsbInit(void)
+  79          {
+  80   1              Timer0Init();
+  81   1      }
+  82          
+  83          /************************** 定时器0中断服务函数 *******************************/
+  84          void zd0() interrupt 1           //T0中断用来计数器溢出,超过测距范围
+  85          {
+  86   1              flag=1;                                                  //中断溢出标志
+  87   1      }
+  88          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    133    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

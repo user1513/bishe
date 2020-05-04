@@ -1,0 +1,106 @@
+C51 COMPILER V9.60.0.0   LCD1602                                                           05/03/2020 22:39:45 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD1602
+OBJECT MODULE PLACED IN Lcd1602.OBJ
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE Lcd1602.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          #include "std_for_wym.h"
+   3          
+   4          
+   5          //液晶写命令
+   6          void LCDWriteCom(unsigned char com)
+   7          {
+   8   1              RS_L;
+   9   1              RW_L;
+  10   1              READ_DATA = com;
+  11   1              EN_H;
+  12   1              DelayMs(2);
+  13   1              EN_L;
+  14   1      }
+  15          //液晶写数据
+  16          void LCDWriteData(unsigned char dat)
+  17          {
+  18   1              RS_H;
+  19   1              RW_L;
+  20   1              READ_DATA = dat;
+  21   1              EN_H;
+  22   1              DelayMs(2);
+  23   1              EN_L;
+  24   1      }
+  25          /*******************************************************************************
+  26          **函数名称：LCD_Write_str()
+  27          **函数功能：在LCD上写入一串字符
+  28          **输 入 口：hang : 要写入的行，add 要写入列   *s要写入的指针数组
+  29          **输 出 口：无
+  30          **返 回 值：无
+  31          **备    注：strlen()是引用库函数string.h  ,可以求出数组的长度
+  32          **日    期：2014.2.22
+  33          *******************************************************************************/
+  34          void LcdWriteStr(unsigned char hang,unsigned char add,char*s)
+  35          {
+  36   1          unsigned char i;
+  37   1          unsigned char length = 0;
+  38   1              if(hang==1)   
+  39   1                      LCDWriteCom(0x80+add);
+  40   1              else
+  41   1                      LCDWriteCom(0x80+0x40+add);
+  42   1          length = strlen(s);
+  43   1          for(i=0;i<length;i++)
+  44   1            LCDWriteData(*s++);          //指针送完数据后自加一
+  45   1      }
+  46          /*void LcdWriteChar(unsigned char hang,unsigned char add,char Ch)
+  47          {
+  48                  if(hang == 1)LCDWriteCom(0x80+add);
+  49                  else LCDWriteCom(0x80+0x40+add);
+  50                  LCDWriteData(Ch);
+  51          }*/
+  52          
+  53          //能像printf一样使用
+  54          void Lcd1602Printf( unsigned char x, unsigned char y, unsigned char *p,...)
+  55          {
+C51 COMPILER V9.60.0.0   LCD1602                                                           05/03/2020 22:39:45 PAGE 2   
+
+  56   1              char idata LcdBuf[17];
+  57   1        va_list ap;
+  58   1        va_start(ap, p);
+  59   1              vsprintf(LcdBuf,p,ap);
+  60   1              va_end(ap);
+  61   1        LcdWriteStr(x,y,LcdBuf);
+  62   1      }
+  63          
+  64          void Init_1602(void)
+  65          {
+  66   1               LCDWriteCom(0x38);       //设置16*2显示，5*7点阵，8位数据接口
+  67   1               LCDWriteCom(0x0c);       //开显示，不显示光标
+  68   1               LCDWriteCom(0x06);       //地址加1，当写入数据的时候光标右移
+  69   1               LCDWriteCom(0x01);       // 清屏
+  70   1               DelayMs(2);
+  71   1               //Lcd1602Printf(1,0," Lcd1602 Normal ");    //测试液晶1602显示用  Normal:正常
+  72   1      }
+  73          
+  74          
+  75          
+  76          
+  77          
+  78          
+  79          
+  80          
+  81          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    205    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      29
+   IDATA SIZE       =   ----      17
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
