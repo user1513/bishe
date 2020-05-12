@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"phase_freq.obj" 
+TO "phase_freq" 
+RAMSIZE(256) 

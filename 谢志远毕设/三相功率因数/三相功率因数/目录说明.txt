@@ -1,0 +1,3 @@
+phase_power 为Proteus8.6工程文件
+det_phase 为KEIL 4工程文件
+项目.VI是LABVIEW 2011文件
