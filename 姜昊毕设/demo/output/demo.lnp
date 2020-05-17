@@ -1,0 +1,6 @@
+".\output\main.obj",
+".\output\timer0.obj",
+".\output\lcd12864.obj" 
+TO ".\output\demo" 
+
+PRINT(".\Listings\demo.map") REMOVEUNUSED 

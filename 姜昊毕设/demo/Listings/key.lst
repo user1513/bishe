@@ -1,0 +1,152 @@
+C51 COMPILER V9.01   KEY                                                                   04/07/2020 22:14:25 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN .\output\key.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil C51\C51\BIN\C51.EXE source\key.c OMF2 DEBUG PRINT(.\Listings\key.lst) T
+                    -ABS(2) PREPRINT(.\Listings\key.i) OBJECT(.\output\key.obj)
+
+line level    source
+
+   1          /******************************************************************************
+   2          文 件 名   : key.c
+   3                    
+   4          @file key.c
+   5          @brief 独立按键驱动
+   6          
+   7          ******************************************************************************/
+   8          
+   9          /*----------------------------------------------*
+  10           * 包含头文件                                   *
+  11           *----------------------------------------------*/
+  12          #include "main.h"
+  13          
+  14          #ifdef KEY_DEV_DRIVER
+  15          
+  16          /*----------------------------------------------*
+  17           * 宏定义                                 *
+  18           *----------------------------------------------*/
+  19          #define DEBUG   ( 1 )
+  20          
+  21          #if DEBUG
+  22          #define log(X)    print_string(X)
+  23          #else
+              #define log(X)
+              #endif
+  26          
+  27          ///独立按键引脚定义
+  28          sbit KEY0_PIN = P1^0;
+  29          sbit KEY1_PIN = P1^1;
+  30          sbit KEY2_PIN = P1^2;
+  31          sbit KEY3_PIN = P1^3;
+  32          sbit KEY4_PIN = P1^4;
+  33          sbit KEY5_PIN = P1^5;
+  34          sbit KEY6_PIN = P1^6;
+  35          sbit KEY7_PIN = P1^7;
+  36          /*----------------------------------------------*
+  37           * 枚举定义                            *
+  38           *----------------------------------------------*/
+  39          
+  40          /*----------------------------------------------*
+  41           * 结构体定义                              *
+  42           *----------------------------------------------*/
+  43          
+  44          /*----------------------------------------------*
+  45           * 外部函数原型说明                                     *
+  46           *----------------------------------------------*/
+  47          
+  48          /*----------------------------------------------*
+  49           * 内部函数原型说明                                   *
+  50           *----------------------------------------------*/
+  51          
+  52          /*----------------------------------------------*
+  53           * 全局变量                                     *
+  54           *----------------------------------------------*/
+C51 COMPILER V9.01   KEY                                                                   04/07/2020 22:14:25 PAGE 2   
+
+  55          
+  56          /*----------------------------------------------*
+  57           * 常量定义                                       *
+  58           *----------------------------------------------*/
+  59          code char * button_event_debug_string[] = {
+  60              ENUM_TO_STR(BUTTON_PRESS_DOWN),
+  61              ENUM_TO_STR(BUTTON_PRESS_CLICK),
+  62              ENUM_TO_STR(BUTTON_PRESS_SHORT_START),
+  63              ENUM_TO_STR(BUTTON_PRESS_SHORT_UP),
+  64              ENUM_TO_STR(BUTTON_PRESS_LONG_START),
+  65              ENUM_TO_STR(BUTTON_PRESS_LONG_UP),
+  66              ENUM_TO_STR(BUTTON_PRESS_LONG_HOLD),
+  67              ENUM_TO_STR(BUTTON_PRESS_LONG_HOLD_UP),
+  68              ENUM_TO_STR(BUTTON_PRESS_MAX),
+  69              ENUM_TO_STR(BUTTON_PRESS_NONE),
+  70          };
+  71          /*---------------------------------------------------------------------------*/
+  72          /**
+  73          *@brief 获得按键当前值
+  74          *
+  75          *
+  76          *@param key_num 独立按键编号 0 ~ 7
+  77          *
+  78          *@return IO口值0/1
+  79          * 
+  80          *
+  81          *@note 
+  82          *
+  83          */
+  84          uint8_t get_key_value(uint8_t key_num)
+  85          {
+  86   1        uint8_t key_value;
+  87   1      
+  88   1        switch(key_num){
+  89   2          case 0:
+  90   2            key_value = KEY0_PIN;
+  91   2            break;
+  92   2          case 1:
+  93   2            key_value = KEY1_PIN;
+  94   2            break;
+  95   2          case 2:
+  96   2            key_value = KEY2_PIN;
+  97   2            break;
+  98   2          case 3:
+  99   2            key_value = KEY3_PIN;
+ 100   2            break;
+ 101   2          case 4:
+ 102   2            key_value = KEY4_PIN;
+ 103   2            break;
+ 104   2          case 5:
+ 105   2            key_value = KEY5_PIN;
+ 106   2            break;
+ 107   2          case 6:
+ 108   2            key_value = KEY6_PIN;
+ 109   2            break;
+ 110   2          case 7:
+ 111   2            key_value = KEY7_PIN;
+ 112   2            break;
+ 113   2          default:
+ 114   2            return BUTTON_VALUE_UP;
+ 115   2        }
+ 116   1      
+C51 COMPILER V9.01   KEY                                                                   04/07/2020 22:14:25 PAGE 3   
+
+ 117   1        return key_value;
+ 118   1      }
+ 119          /*---------------------------------------------------------------------------*/
+ 120          #endif//KEY_DEV_DRIVER
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     78    ----
+   CONSTANT SIZE    =    243    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

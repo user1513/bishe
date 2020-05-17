@@ -1,0 +1,355 @@
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE DIGITAL_TUBE
+OBJECT MODULE PLACED IN .\output\digital_tube.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil C51\C51\BIN\C51.EXE source\digital_tube.c OMF2 DEBUG PRINT(.\Listings\d
+                    -igital_tube.lst) TABS(2) PREPRINT(.\Listings\digital_tube.i) OBJECT(.\output\digital_tube.obj)
+
+line level    source
+
+   1          /******************************************************************************
+   2          文 件 名   : digital_tube.c
+   3          
+   4          @file digital_tube.c
+   5          @brief 数码管驱动
+   6          
+   7          ******************************************************************************/
+   8          
+   9          /*----------------------------------------------*
+  10           * 包含头文件                                   *
+  11           *----------------------------------------------*/
+  12          #include "main.h"
+  13          
+  14          #ifdef DIGITAL_TUBE_DEV_DRIVER
+              
+              /*----------------------------------------------*
+               * 宏定义                                 *
+               *----------------------------------------------*/
+              
+              sbit LS138_A = P2^2;
+              sbit LS138_B = P2^3;
+              sbit LS138_C = P2^4;
+              
+              /*----------------------------------------------*
+               * 枚举定义                            *
+               *----------------------------------------------*/
+              
+              /*----------------------------------------------*
+               * 结构体定义                              *
+               *----------------------------------------------*/
+              
+              /*----------------------------------------------*
+               * 外部函数原型说明                                     *
+               *----------------------------------------------*/
+              
+              /*----------------------------------------------*
+               * 内部函数原型说明                                   *
+               *----------------------------------------------*/
+              
+              /*----------------------------------------------*
+               * 全局变量                                     *
+               *----------------------------------------------*/
+              
+              /*----------------------------------------------*
+               * 常量定义                                       *
+               *----------------------------------------------*/
+              #ifdef GONGYANG_DIGITAL_TUBE  /* 如果定义的共阳数码管 */
+                                              /*0,   1,   2,   3,  4,   5,   6,   7,   8,   9,   A,   b,   C,   d,   E, 
+             -  F,   -*/
+              uint8_t code digital_table[] = {0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90,0x88,0x83,0xc6,0xa1,0x86
+             -,0x8e, 0xbf};
+              #else 
+                      /* 共阴数码管 */              /*0,   1,   2,   3,  4,   5,   6,   7,   8,   9,   A,   b,   C,   d,
+             -   E,   F,  -*/
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 2   
+
+              uint8_t code digital_table[] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79
+             -,0x71, 0x40};
+              #endif
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 74ls138翻译二进制
+              *
+              *
+              *@param num 要输出的数字
+              *
+              *@return 
+              * 
+              *
+              *@note 
+              *
+              */
+              static void num_to_74ls138(uint8_t num)
+              { 
+                if(num == 0){
+                  LS138_A = 0;
+                  LS138_B = 0;
+                  LS138_C = 0;  
+                }else if(num == 1){
+                  LS138_C = 0;
+                  LS138_B = 0;
+                  LS138_A = 1;
+                }else if(num == 2){
+                  LS138_C = 0;
+                  LS138_B = 1;
+                  LS138_A = 0;
+                }else if(num == 3){
+                  LS138_C = 0;
+                  LS138_B = 1;
+                  LS138_A = 1;
+                }else if(num == 4){
+                  LS138_C = 1;
+                  LS138_B = 0;
+                  LS138_A = 0;
+                }else if(num == 5){
+                  LS138_C = 1;
+                  LS138_B = 0;
+                  LS138_A = 1;
+                }else if(num == 6){
+                  LS138_C = 1;
+                  LS138_B = 1;
+                  LS138_A = 0;
+                }else if(num == 7){
+                  LS138_C = 1;
+                  LS138_B = 1;
+                  LS138_A = 1;
+                }
+              }
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 数码管显示一位数字
+              *
+              *
+              *@param pos 选择哪一个数码管显示,0~7,共8个数码管
+              *@param num 要显示的数字 0 ~ 9
+              *@param is_dislay_point 是否显示小数点
+              *
+              *@return 
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 3   
+
+              * 
+              *
+              *@note 
+              *
+              */
+              void digital_display_one_num(uint8_t pos, uint8_t num, bool is_dislay_point)
+              {  
+                if(pos > 7 || num >= sizeof(digital_table)){
+                  return;
+                }
+              
+                num_to_74ls138(pos);
+                P0 = 0xff;///<消影
+                if(is_dislay_point){
+              #ifdef GONGYANG_DIGITAL_TUBE  /* 如果定义的共阳数码管 */
+                  P0 = digital_table[num] & 0x7f;
+              #else
+                  P0 = digital_table[num] | 0x80;
+              #endif
+                }else{
+                  P0 = digital_table[num];
+                }
+              }
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 数码管显示一个字符
+              *
+              *
+              *@param pos 字符显示的位置 0 ~ 7
+              *@param ch 要显示的字符
+              *@param is_dislay_point 是否显示小数点
+              *
+              *@return 
+              * 
+              *
+              *@note 
+              *
+              */
+              void digital_display_one_char(uint8_t pos, uint8_t ch, bool is_dislay_point)
+              {
+                switch(ch){
+                  case '-':
+                    digital_display_one_num(pos, 16, is_dislay_point);
+                    break;
+                  case 'A':
+                    digital_display_one_num(pos, 10, is_dislay_point);
+                    break;
+                  case 'b':
+                    digital_display_one_num(pos, 11, is_dislay_point);
+                    break;
+                  case 'C':
+                    digital_display_one_num(pos, 12, is_dislay_point);
+                    break;
+                  case 'd':
+                    digital_display_one_num(pos, 13, is_dislay_point);
+                    break;
+                  case 'E':
+                    digital_display_one_num(pos, 14, is_dislay_point);
+                    break;
+                  case 'F':
+                    digital_display_one_num(pos, 15, is_dislay_point);
+                    break;
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 4   
+
+                  default:
+                    break;
+                }
+              }
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 2位数码管显示数字
+              *
+              *
+              *@param pos 显示的数码管位置
+              *@param num 要显示的数字
+              *
+              *@return 
+              * 
+              *
+              *@note 使用数码管动态扫描,默认不显示小数点
+              *
+              */
+              void digital_display_two_num(uint8_t pos, uint8_t num)
+              {
+                static bool digital_channel = 0;
+                uint8_t tab[2]; 
+                uint8_t i = 0;
+                
+                memset(tab, 0, sizeof(tab));
+                if(num > 99){
+                  return;
+                }
+              
+                while(num > 0){
+                  tab[i++] = num % 10;///<取出整数n的个位数，并存入tab数组 
+                  num /= 10; ///<舍弃已经取出的个位数 
+                }
+              
+                if(digital_channel){
+                  digital_display_one_num(pos + 1, tab[0], 0);//个位
+                }else{
+                  digital_display_one_num(pos, tab[1], 0);//十位
+                }
+                
+                digital_channel = !digital_channel;
+              }
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 3位数码管显示数字
+              *
+              *
+              *@param pos 显示的数码管位置
+              *@param num 要显示的数字
+              *
+              *@return 
+              * 
+              *
+              *@note 使用数码管动态扫描,默认不显示小数点
+              *
+              */
+              void digital_display_three_num(uint8_t pos, uint16_t num)
+              {
+                static uint8_t digital_channel = 0;
+                uint8_t tab[3]; 
+                uint8_t i = 0;
+                
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 5   
+
+                memset(tab, 0, sizeof(tab));
+                if(num > 999){
+                  return;
+                }
+              
+                while(num > 0){
+                  tab[i++] = num % 10;///<取出整数n的个位数，并存入tab数组 
+                  num /= 10; ///<舍弃已经取出的个位数 
+                }
+              
+                if(digital_channel == 0){
+                  ++digital_channel;
+                  digital_display_one_num(pos, tab[2], 0);//百位
+                }else if(digital_channel == 1){
+                  ++digital_channel;
+                  digital_display_one_num(pos + 1, tab[1], 0);//十位
+                }else{
+                  digital_display_one_num(pos + 2, tab[0], 0);//个位
+                  digital_channel = 0;
+                }
+              }
+              /*---------------------------------------------------------------------------*/
+              /**
+              *@brief 4位数码管显示数字
+              *
+              *
+              *@param pos 显示的数码管位置
+              *@param num 要显示的数字
+              *
+              *@return 
+              * 
+              *
+              *@note 使用数码管动态扫描,默认不显示小数点
+              *
+              */
+              void digital_display_four_num(uint8_t pos, uint16_t num)
+              {
+                static uint8_t digital_channel = 0;
+                uint8_t tab[4]; 
+                uint8_t i = 0;
+                
+                memset(tab, 0, sizeof(tab));
+                if(num > 9999){
+                  return;
+                }
+              
+                while(num > 0){
+                  tab[i++] = num % 10;///<取出整数n的个位数，并存入tab数组 
+                  num /= 10; ///<舍弃已经取出的个位数 
+                }
+              
+                switch(digital_channel){
+                  case 0:
+                    ++digital_channel;
+                    digital_display_one_num(pos, tab[3], 0);//千位
+                    break;
+                  case 1:
+                    ++digital_channel;
+                    digital_display_one_num(pos + 1, tab[2], 0);//百位
+                    break;
+                  case 2:
+                    ++digital_channel;
+C51 COMPILER V9.01   DIGITAL_TUBE                                                          03/08/2020 17:02:14 PAGE 6   
+
+                    digital_display_one_num(pos + 2, tab[1], 0);//十位
+                    break;
+                  case 3:
+                    digital_channel = 0;
+                    digital_display_one_num(pos + 3, tab[0], 0);//个位
+                    break;
+                  default:
+                    digital_channel = 0;
+                    break;
+                }
+              }
+              /*---------------------------------------------------------------------------*/
+              
+              #endif//DIGITAL_TUBE_DEV_DRIVER
+ 313          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

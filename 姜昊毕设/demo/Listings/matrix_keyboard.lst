@@ -1,0 +1,150 @@
+C51 COMPILER V9.01   MATRIX_KEYBOARD                                                       03/07/2020 17:42:19 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MATRIX_KEYBOARD
+OBJECT MODULE PLACED IN .\output\matrix_keyboard.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil C51\C51\BIN\C51.EXE source\matrix_keyboard.c OMF2 DEBUG PRINT(.\Listing
+                    -s\matrix_keyboard.lst) TABS(2) PREPRINT(.\Listings\matrix_keyboard.i) OBJECT(.\output\matrix_keyboard.obj)
+
+line level    source
+
+   1          /******************************************************************************
+   2          
+   3          文 件 名   : matrix_keyboard.c
+   4                    
+   5          @file matrix_keyboard.c
+   6          @brief 矩阵键盘驱动
+   7          
+   8          ******************************************************************************/
+   9          
+  10          /*----------------------------------------------*
+  11           * 包含头文件                                   *
+  12           *----------------------------------------------*/
+  13          #include "main.h"
+  14          
+  15          #ifdef MATRIX_KEYBOARD_DEV_DRIVER
+  16          /*----------------------------------------------*
+  17           * 宏定义                                 *
+  18           *----------------------------------------------*/
+  19          #define MATRIX_KEYBOARD_PORT    P1
+  20          /*----------------------------------------------*
+  21           * 枚举定义                            *
+  22           *----------------------------------------------*/
+  23          
+  24          /*----------------------------------------------*
+  25           * 结构体定义                              *
+  26           *----------------------------------------------*/
+  27          
+  28          /*----------------------------------------------*
+  29           * 外部函数原型说明                                     *
+  30           *----------------------------------------------*/
+  31          
+  32          /*----------------------------------------------*
+  33           * 内部函数原型说明                                   *
+  34           *----------------------------------------------*/
+  35          
+  36          /*----------------------------------------------*
+  37           * 全局变量                                     *
+  38           *----------------------------------------------*/
+  39          
+  40          /*----------------------------------------------*
+  41           * 常量定义                                       *
+  42           *----------------------------------------------*/
+  43          static uint8_t code matrix_keyboard_code_tab[]={
+  44            0x11,0x12,0x14,0x18,0x21,0x22,0x24,0x28,0x41,0x42,0x44,0x48,0x81,0x82,0x84,0x88};
+  45          
+  46          /*---------------------------------------------------------------------------*/
+  47          /**
+  48          *@brief 按键消抖延时函数
+  49          *
+  50          *
+  51          *@param none
+  52          *
+  53          *@return 
+  54          * 
+C51 COMPILER V9.01   MATRIX_KEYBOARD                                                       03/07/2020 17:42:19 PAGE 2   
+
+  55          *
+  56          *@note 该延时函数是在11.0592MHz晶振下计算所得
+  57          *
+  58          */
+  59          static void matrix_keyboard_delay_5ms(void)
+  60          {
+  61   1        unsigned char i, j;
+  62   1      
+  63   1        i = 9;
+  64   1        j = 244;
+  65   1        do
+  66   1        {
+  67   2          while (--j);
+  68   2        } while (--i);
+  69   1      }
+  70          /*---------------------------------------------------------------------------*/
+  71          /**
+  72          *@brief 矩阵键盘扫描
+  73          *
+  74          *
+  75          *@param none
+  76          *
+  77          *@return 0~15 被按下的矩阵键盘值, -1 矩阵键盘未被按下
+  78          * 
+  79          *
+  80          *@note 
+  81          *
+  82          */
+  83          int8_t matrix_keyboard_scan(void)
+  84          {
+  85   1        uint8_t sCode,kCode,i,k;
+  86   1        
+  87   1        MATRIX_KEYBOARD_PORT = 0xf0;
+  88   1        if((MATRIX_KEYBOARD_PORT & 0xf0) != 0xf0){
+  89   2          matrix_keyboard_delay_5ms();
+  90   2          if((MATRIX_KEYBOARD_PORT & 0xf0) != 0xf0){
+  91   3            sCode = 0xfe;
+  92   3            for(k = 0; k < 4; k++){
+  93   4              MATRIX_KEYBOARD_PORT = sCode;
+  94   4              if((MATRIX_KEYBOARD_PORT & 0xf0) != 0xf0){
+  95   5                kCode = ~MATRIX_KEYBOARD_PORT;
+  96   5                for(i = 0; i < 16; i++){
+  97   6                  if(kCode == matrix_keyboard_code_tab[i]){
+  98   7                    for(k = 0; k < 50; k++){
+  99   8                      matrix_keyboard_delay_5ms();
+ 100   8                      kCode = ~MATRIX_KEYBOARD_PORT;
+ 101   8                      if(kCode != matrix_keyboard_code_tab[i]){
+ 102   9                        break;
+ 103   9                      }
+ 104   8                    }
+ 105   7                    return i;
+ 106   7                  }
+ 107   6                }
+ 108   5              }
+ 109   4              else 
+ 110   4                sCode = _crol_(sCode,1);
+ 111   4            }
+ 112   3          }
+ 113   2        }
+ 114   1        return -1;
+ 115   1      }
+ 116          /*---------------------------------------------------------------------------*/
+C51 COMPILER V9.01   MATRIX_KEYBOARD                                                       03/07/2020 17:42:19 PAGE 3   
+
+ 117          
+ 118          #endif//MATRIX_KEYBOARD_DEV_DRIVER
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    110    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

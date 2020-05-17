@@ -1,0 +1,378 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\output\main.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE source\main.c OMF2 OPTIMIZE(8,SPEED) DEBUG PRINT(.\Listings\main.lst) PR
+                    -EPRINT(.\Listings\main.i) OBJECT(.\output\main.obj)
+
+line level    source
+
+   1          /******************************************************************************
+   2          文 件 名   : main.c
+   3          
+   4          @file main.c
+   5          @brief 主函数文件
+   6          ******************************************************************************/
+   7          
+   8          
+   9          /*----------------------------------------------*
+  10           * 包含头文件                                   *
+  11           *----------------------------------------------*/
+  12          #include "main.h"
+  13          
+  14          /*----------------------------------------------*
+  15           * 宏定义                                 *
+  16           *----------------------------------------------*/
+  17          
+  18          #define BUTTON_NUM_PERIOD             ( 0 )///<选择测周还是计数按键
+  19          #define BUTTON_NUM_SWITCH_CHANNEL     ( 1 )///<选择通道按键
+  20          
+  21          sbit SWITCH_CHANNEL_LOW = P2^0;///<通道选择切换
+  22          sbit SWITCH_CHANNEL_HIGH = P2^1;///<通道选择切换
+  23          
+  24          #define WAVE_LENGH        ( 10 )///<波长
+  25          #define SWITHC_VALUE      ( 50000 )///<测周/计数转换门限
+  26          /*----------------------------------------------*
+  27           * 枚举定义                            *
+  28           *----------------------------------------------*/
+  29          
+  30          /*----------------------------------------------*
+  31           * 结构体定义                              *
+  32           *----------------------------------------------*/
+  33          
+  34          /*----------------------------------------------*
+  35           * 外部函数原型说明                                     *
+  36           *----------------------------------------------*/
+  37          
+  38          /*----------------------------------------------*
+  39           * 内部函数原型说明                                   *
+  40           *----------------------------------------------*/
+  41          
+  42          /*----------------------------------------------*
+  43           * 全局变量                                     *
+  44           *----------------------------------------------*/
+  45          static bool is_test_freq_period = true;///<是否测周, true---测周 false---计数
+  46          static uint16_t freq_value;///<用于保存频率值
+  47          static uint8_t display_buf[16];///<显示buf
+  48          static uint16_t cnt = 0;///<用于计算频率
+  49          
+  50          static bool is_convert_busy = false;
+  51          static uint8_t channel = 0;
+  52          
+  53          
+  54          
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 2   
+
+  55          /*串口使用*/
+  56          void uart_init()
+  57          {
+  58   1              SCON=0x40;
+  59   1              PCON = 0X00;                            //波特率不加倍
+  60   1              REN=0;                                          //发送接收是能
+  61   1              T2MOD = 0X01;
+  62   1              T2CON = 0X30;                           //设置T2位波特率时钟
+  63   1              RCAP2H = 0xff;                          //65536-11059200/32×9600
+  64   1              RCAP2L = 0xDC;                          //初始化计数值 11.0592Mhz 9600波特率
+  65   1              TH2 = 0xff;                                     //初始化计数值 11.0592Mhz 9600波特率
+  66   1              TL2 = 0xDC;                               
+  67   1              SM0=0;                                          //串口模式8为数据为，1位停止位
+  68   1              SM1=1;                                          //串口模式8为数据为，1位停止位
+  69   1              TR2=1;                                          //定时器2开始计数
+  70   1              TI=0;                                           //清除中断标志位
+  71   1      }
+  72          
+  73          
+  74          
+  75          void send_char(unsigned char dat)               //发送一个字节数据
+  76          {
+  77   1              SBUF=dat;                                       //发送数据
+  78   1              while(!TI);                                 //等待发送是否完成
+  79   1              TI=0;
+  80   1      }
+  81          
+  82          void send_num(unsigned int num)         //发送一个字节数据
+  83          {
+  84   1              int i;
+  85   1              unsigned char tab[2] = {0};
+  86   1      
+  87   1              tab[0] = (num & 0xff00) >> 8;      //发送功率数据，扩大10000倍的，方便上位机处理，高位在前，低位在后
+  88   1              tab[1] = (num & 0x00ff);
+  89   1                       
+  90   1              for(i=0;i<2;i++)                        //将所有数据发送出去
+  91   1              {
+  92   2                      send_char(tab[i]);
+  93   2              }
+  94   1      }
+  95          
+  96          /*----------------------------------------------*
+  97           * 常量定义                                       *
+  98           *----------------------------------------------*/
+  99          
+ 100          /*---------------------------------------------------------------------------*/
+ 101          /**
+ 102          *@brief 通道切换
+ 103          *
+ 104          *
+ 105          *@param none
+ 106          *
+ 107          *@return 
+ 108          * 
+ 109          *
+ 110          *@note 
+ 111          *
+ 112          */
+ 113          static void channel_switch(void)
+ 114          {
+ 115   1        cnt = 0;
+ 116   1        switch(channel){
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 3   
+
+ 117   2          case 0:
+ 118   2            SWITCH_CHANNEL_LOW = 0;
+ 119   2            SWITCH_CHANNEL_HIGH = 0;
+ 120   2            //lcd1602_display_string(sizeof("Ch:") - 1, 0, "0");
+ 121   2            break;
+ 122   2          case 1:
+ 123   2            SWITCH_CHANNEL_LOW = 1;
+ 124   2            SWITCH_CHANNEL_HIGH = 0;
+ 125   2            //lcd1602_display_string(sizeof("Ch:") - 1, 0, "1");
+ 126   2            break;
+ 127   2          case 2:
+ 128   2            SWITCH_CHANNEL_LOW = 0;
+ 129   2            SWITCH_CHANNEL_HIGH = 1;
+ 130   2            //lcd1602_display_string(sizeof("Ch:") - 1, 0, "2");
+ 131   2            break;
+ 132   2          case 3:
+ 133   2            SWITCH_CHANNEL_LOW = 1;
+ 134   2            SWITCH_CHANNEL_HIGH = 1;
+ 135   2            //lcd1602_display_string(sizeof("Ch:") - 1, 0, "3");
+ 136   2            break;
+ 137   2        }
+ 138   1        
+ 139   1      }
+ 140          /*---------------------------------------------------------------------------*/
+ 141          /**
+ 142          *@brief 显示固定字符串
+ 143          *
+ 144          *
+ 145          *@param none
+ 146          *
+ 147          *@return 
+ 148          * 
+ 149          *
+ 150          *@note 
+ 151          *
+ 152          */
+ 153          static void display_fix_string(void)
+ 154          {
+ 155   1        lcd12864_show_string(0, 0, "Ch0:");
+ 156   1        lcd12864_show_string(2, 0, "Ch1:");
+ 157   1        lcd12864_show_string(4, 0, "Ch2:");
+ 158   1        lcd12864_show_string(6, 0, "Ch3:");
+ 159   1        //lcd12864_show_string(0, 120, "P");
+ 160   1      }
+ 161          /*---------------------------------------------------------------------------*/
+ 162          /**
+ 163          *@brief 设置timer1工作在计数模式
+ 164          *
+ 165          *
+ 166          *@param none
+ 167          *
+ 168          *@return 
+ 169          * 
+ 170          *
+ 171          *@note 
+ 172          *
+ 173          */
+ 174          static void timer1_cnt_init(void)
+ 175          {
+ 176   1        TMOD &= 0x0F;///<设置定时器模式
+ 177   1        TMOD |= 0x50; ///<设置定时器计数
+ 178   1        TL1 = 0;///<设置定时初值
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 4   
+
+ 179   1        TH1 = 0;///<设置定时初值
+ 180   1        TF1 = 0;///<清除TF1标志
+ 181   1        TR1 = 1;///<定时器1开始计时
+ 182   1      }
+ 183          /*---------------------------------------------------------------------------*/
+ 184          //      cnt = 0;
+ 185          //              is_test_freq_period = !is_test_freq_period;
+ 186          //              if(is_test_freq_period){
+ 187          
+ 188          /*---------------------------------------------------------------------------*/
+ 189          /**
+ 190          *@brief 显示频率值
+ 191          *
+ 192          *
+ 193          *@param none
+ 194          *
+ 195          *@return 
+ 196          * 
+ 197          *
+ 198          *@note 
+ 199          *
+ 200          */
+ 201          unsigned int uart_str[4] = {0}; 
+ 202          
+ 203          static void display_freq(uint8_t ch)
+ 204          {
+ 205   1        float temp;
+ 206   1        uint32_t v;
+ 207   1        
+ 208   1        if(is_test_freq_period){              /*测周法*/
+ 209   2          v = (uint32_t)freq_value * WAVE_LENGH  * 3600;
+ 210   2          temp = v / 2000000.0;
+ 211   2          sprintf(display_buf, "%.1fKm/h    ", temp);
+ 212   2          lcd12864_show_string(ch * 2, 8*(sizeof("Ch0:") - 1), display_buf);
+ 213   2        }else{                        /*测频法*/
+ 214   2          temp = freq_value / 20.0;
+ 215   2          temp = temp * WAVE_LENGH * 1.8;
+ 216   2          sprintf(display_buf, "%.1fKm/h   ", temp);
+ 217   2          lcd12864_show_string(ch * 2, 8*(sizeof("Ch0:") - 1), display_buf);
+ 218   2          HAL_Delay(1000);
+ 219   2        }
+ 220   1              uart_str[ch] = (temp + 0.05) * 10;
+ 221   1              send_num(0x55AA);
+ 222   1              for(v = 0; v < 4; v++)
+ 223   1              {
+ 224   2                      send_num(uart_str[v]);
+ 225   2              }  
+ 226   1      }
+ 227          
+ 228          
+ 229          
+ 230          /*---------------------------------------------------------------------------*/
+ 231          /**
+ 232          *@brief 程序入口
+ 233          *
+ 234          *
+ 235          *@param none
+ 236          *
+ 237          *@return
+ 238          * 
+ 239          *
+ 240          *@note 程序入口函数main
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 5   
+
+ 241          *
+ 242          */
+ 243          void main(void)
+ 244          {
+ 245   1        uint16_t limit;
+ 246   1      
+ 247   1        limit = SWITHC_VALUE;
+ 248   1        limit /= 1000;
+ 249   1        limit *= 20;
+ 250   1        lcd12864_init();
+ 251   1        timer0_mode2_init();///<定时器模式2初始化
+ 252   1        display_fix_string();
+ 253   1        channel_switch();
+ 254   1              uart_init();
+ 255   1        __enable_irq();
+ 256   1        
+ 257   1        timer1_cnt_init();
+ 258   1        while(1){
+ 259   2                //send_num(0x55AA);
+ 260   2                //send_num(0xaa55);
+ 261   2          if(is_convert_busy){
+ 262   3            display_freq(channel);
+ 263   3      
+ 264   3            if(is_test_freq_period && freq_value > SWITHC_VALUE){
+ 265   4              is_test_freq_period = false;
+ 266   4            }else if((is_test_freq_period == false) && freq_value < limit){
+ 267   4              is_test_freq_period = true;
+ 268   4            }else{
+ 269   4              channel++;
+ 270   4              if(channel > 3){
+ 271   5                channel = 0;
+ 272   5              }
+ 273   4            }
+ 274   3            channel_switch();
+ 275   3            is_convert_busy = false;
+ 276   3            TH1 = 0;
+ 277   3                TL1 = 0;
+ 278   3          }
+ 279   2        }
+ 280   1      }
+ 281          
+ 282          /*---------------------------------------------------------------------------*/
+ 283          void timer0_irq(void)
+ 284          {
+ 285   1        static uint8_t ticks = 0;///<用于1毫秒计数
+ 286   1        ++ticks;
+ 287   1        ++cnt;
+ 288   1        if(ticks == 5){
+ 289   2          ticks = 0;
+ 290   2          ++clock_ticks;
+ 291   2        }
+ 292   1      
+ 293   1        if(is_convert_busy){
+ 294   2          return;
+ 295   2        }
+ 296   1        if(is_test_freq_period && (cnt == 5000)){
+ 297   2          freq_value = (uint16_t)(TH1 << 8) | TL1;
+ 298   2          is_convert_busy = true;
+ 299   2        }else if((is_test_freq_period == false) && (cnt == 100)){///<计数0.2秒,求频率值
+ 300   2          freq_value = (uint16_t)(TH1 << 8) | TL1;
+ 301   2          is_convert_busy = true;
+ 302   2        }
+C51 COMPILER V9.60.0.0   MAIN                                                              05/13/2020 13:24:06 PAGE 6   
+
+ 303   1      }
+ 304          /*---------------------------------------------------------------------------*/
+ 305          /**
+ 306          *@brief 串口接收中断处理
+ 307          *
+ 308          *
+ 309          *@param ch 串口接收到的字符
+ 310          *
+ 311          *@return 
+ 312          * 
+ 313          *
+ 314          *@note 
+ 315          *
+ 316          */
+ 317          void uart_rx_irq(uint8_t ch)
+ 318          {
+ 319   1        ch = ch;
+ 320   1          //uart_put_char(ch);
+ 321   1      }
+ 322          /*---------------------------------------------------------------------------*/
+ 323          /**
+ 324          *@brief 串口发送中断处理
+ 325          *
+ 326          *
+ 327          *@param none
+ 328          *
+ 329          *@return 
+ 330          * 
+ 331          *
+ 332          *@note 
+ 333          *
+ 334          */
+ 335          void uart_tx_irq(void)
+ 336          {
+ 337   1      
+ 338   1      }
+ 339          /*---------------------------------------------------------------------------*/
+ 340          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    716    ----
+   CONSTANT SIZE    =     47    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     30      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
