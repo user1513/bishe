@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BSP_DS18B20                                                       03/02/2020 13:20:54 PAGE 1   
+C51 COMPILER V9.60.0.0   BSP_DS18B20                                                       05/21/2020 20:12:10 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BSP_DS18B20
@@ -62,7 +62,7 @@ line level    source
   53   1              for (i=8; i>0; i--)
   54   1              {
   55   2                      DQ = 0;
-C51 COMPILER V9.60.0.0   BSP_DS18B20                                                       03/02/2020 13:20:54 PAGE 2   
+C51 COMPILER V9.60.0.0   BSP_DS18B20                                                       05/21/2020 20:12:10 PAGE 2   
 
   56   2                      DQ = dat&0x01;
   57   2              delay_18B20(5);

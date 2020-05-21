@@ -556,7 +556,9 @@ void main()
 {
 	uchar i;									// 循环变量
 	float dist;								// 保存测量结果
-	
+	/*C51采用的是大端存储*/
+	uchar UsartStr[11] = {0x55,0xaa};				/*定义串口发送字符串*/
+	uchar *pUsartStr = UsartStr;
 	LcdInit();								// 液晶功能初始化
 	LcdShowInit();						// 液晶显示内容初始化
 	AlarmInit();							// 报警值初始化
@@ -567,64 +569,150 @@ void main()
 	Trig2_P=0;
 	Trig3_P=0;
 	Trig4_P=0;
-
-	while(1)
-	{
 		sprintf(temp_table, "temp:%04.1f\n",Temp_val);
 		Send_String(temp_table);
-		sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
-		Send_String(temp_table);
-		/*传感器1*/
-		LcdGotoXY(0,6);	    		// 光标定位
-		dist = Calibration_Data(GetDistance1() * 10);
-		LcdPrintNum(dist);			// 显示传感器1测量到的距离
-		AlarmJudge1(dist);			// 判断传感器1的测量距离是否需要报警
-		
+ 	while(1)
+ 	{
+ 		//sprintf(temp_table, "temp:%04.1f\n",Temp_val);
+ 		// Send_String(temp_table);
+ 		// sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
+ 		// Send_String(temp_table);
+ 		/*传感器1*/
+ 		LcdGotoXY(0,6);	    		// 光标定位
+ 		dist = Calibration_Data(GetDistance1() * 10);
+ 		LcdPrintNum(dist);			// 显示传感器1测量到的距离
+ 		AlarmJudge1(dist);			// 判断传感器1的测量距离是否需要报警
+ 		*(uint *)(pUsartStr + 2) = dist;
 
-		/*延时并扫描按键*/
-		for(i=0;i<15;i++)
-		{
-			KeyScanf();
-			DelayMs(10);
-		}
+ 		/*延时并扫描按键*/
+ 		for(i=0;i<15;i++)
+ 		{
+ 			KeyScanf();
+ 			DelayMs(10);
+ 		}
 		
-		/*传感器2*/
-		LcdGotoXY(1,13);	    	// 光标定位
-		dist = Calibration_Data(GetDistance2() * 10);
-		LcdPrintNum(dist);			// 显示传感器2测量到的距离
-		AlarmJudge2(dist);			// 判断传感器2的测量距离是否需要报警
+ 		/*传感器2*/
+ 		LcdGotoXY(1,13);	    	// 光标定位
+ 		dist = Calibration_Data(GetDistance2() * 10);
+ 		LcdPrintNum(dist);			// 显示传感器2测量到的距离
+ 		AlarmJudge2(dist);			// 判断传感器2的测量距离是否需要报警
+ 		*(uint *)(pUsartStr + 2 + 2 * 1) = dist;
+ 		/*延时并扫描按键*/
+ 		for(i=0;i<15;i++)
+ 		{
+ 			KeyScanf();
+ 			DelayMs(10);
+ 		}
 		
-		/*延时并扫描按键*/
-		for(i=0;i<15;i++)
-		{
-			KeyScanf();
-			DelayMs(10);
-		}
+ 		/*传感器3*/
+ 		dist = Calibration_Data(GetDistance3() * 10);
+ 		LcdGotoXY(1,7);	    		// 光标定位
+ 		LcdPrintNum(dist);			// 显示传感器3测量到的距离
+ 		AlarmJudge3(dist);			// 判断传感器3的测量距离是否需要报警
+ 		*(uint *)(pUsartStr + 2 + 2 * 2) = dist;
+ 		/*延时并扫描按键*/
+ 		for(i=0;i<15;i++)
+ 		{
+ 			KeyScanf();
+ 			DelayMs(10);
+ 		}
 		
-		/*传感器3*/
-		dist = Calibration_Data(GetDistance3() * 10);
-		LcdGotoXY(1,7);	    		// 光标定位
-		LcdPrintNum(dist);			// 显示传感器3测量到的距离
-		AlarmJudge3(dist);			// 判断传感器3的测量距离是否需要报警
+ 		/*传感器4*/
+ 		dist = Calibration_Data(GetDistance4() * 10);
+ 		LcdGotoXY(1,1);	    		// 光标定位
+ 		LcdPrintNum(dist);			// 显示传感器4测量到的距离
+ 		AlarmJudge4(dist);			// 判断传感器4的测量距离是否需要报警
+ 		*(uint *)(pUsartStr + 2 + 2 * 3)  = dist;
+ 		*(pUsartStr + 2 + 2 * 4)  = Temp_val;
+ 		Send_String_Len(pUsartStr, 11);
+ 		/*延时并扫描按键*/
+ 		for(i=0;i<15;i++)
+ 		{
+ 			KeyScanf();
+ 			DelayMs(10);
+ 		}
+ 	}
+ }
+// /*********************************************************/
+// // 主函数
+// /*********************************************************/
+// void main()
+// {
+// 	uchar i;									// 循环变量
+// 	float dist;								// 保存测量结果
+// 	/*C51采用的是大端存储*/
+// 	//uchar UsartStr[11] = {0x55,0xaa};				/*定义串口发送字符串*/
+// 	//uchar *pUsartStr = UsartStr;
+// 	LcdInit();								// 液晶功能初始化
+// 	LcdShowInit();						// 液晶显示内容初始化
+// 	AlarmInit();							// 报警值初始化
+	
+// 	TMOD |= 0x01;							// 选择定时器0，并且确定是工作方式1（为了超声波模块测量距离计时用的）
+// 	UartInit();
+// 	Trig1_P=0;								// 初始化触发引脚为低电平
+// 	Trig2_P=0;
+// 	Trig3_P=0;
+// 	Trig4_P=0;
+
+// 	while(1)
+// 	{
+// 		//sprintf(temp_table, "temp:%04.1f\n",Temp_val);
+// 		// Send_String(temp_table);
+// 		// sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
+// 		// Send_String(temp_table);
+// 		/*传感器1*/
+// 		LcdGotoXY(0,6);	    		// 光标定位
+// 		dist = Calibration_Data(GetDistance1() * 10);
+// 		LcdPrintNum(dist);			// 显示传感器1测量到的距离
+// 		AlarmJudge1(dist);			// 判断传感器1的测量距离是否需要报警
+// 		//*(uint *)(pUsartStr + 2) = dist;
+
+// 		/*延时并扫描按键*/
+// 		for(i=0;i<15;i++)
+// 		{
+// 			KeyScanf();
+// 			DelayMs(10);
+// 		}
 		
-		/*延时并扫描按键*/
-		for(i=0;i<15;i++)
-		{
-			KeyScanf();
-			DelayMs(10);
-		}
+// 		/*传感器2*/
+// 		LcdGotoXY(1,13);	    	// 光标定位
+// 		dist = Calibration_Data(GetDistance2() * 10);
+// 		LcdPrintNum(dist);			// 显示传感器2测量到的距离
+// 		AlarmJudge2(dist);			// 判断传感器2的测量距离是否需要报警
+// 		//*(uint *)(pUsartStr + 2 + 2 * 1) = dist;
+// 		/*延时并扫描按键*/
+// 		for(i=0;i<15;i++)
+// 		{
+// 			KeyScanf();
+// 			DelayMs(10);
+// 		}
 		
-		/*传感器4*/
-		dist = Calibration_Data(GetDistance4() * 10);
-		LcdGotoXY(1,1);	    		// 光标定位
-		LcdPrintNum(dist);			// 显示传感器4测量到的距离
-		AlarmJudge4(dist);			// 判断传感器4的测量距离是否需要报警
+// 		/*传感器3*/
+// 		dist = Calibration_Data(GetDistance3() * 10);
+// 		LcdGotoXY(1,7);	    		// 光标定位
+// 		LcdPrintNum(dist);			// 显示传感器3测量到的距离
+// 		AlarmJudge3(dist);			// 判断传感器3的测量距离是否需要报警
+// 		//*(uint *)(pUsartStr + 2 + 2 * 2) = dist;
+// 		/*延时并扫描按键*/
+// 		for(i=0;i<15;i++)
+// 		{
+// 			KeyScanf();
+// 			DelayMs(10);
+// 		}
 		
-		/*延时并扫描按键*/
-		for(i=0;i<15;i++)
-		{
-			KeyScanf();
-			DelayMs(10);
-		}
-	}
-}
+// 		/*传感器4*/
+// 		dist = Calibration_Data(GetDistance4() * 10);
+// 		LcdGotoXY(1,1);	    		// 光标定位
+// 		LcdPrintNum(dist);			// 显示传感器4测量到的距离
+// 		AlarmJudge4(dist);			// 判断传感器4的测量距离是否需要报警
+// 		//*(uint *)(pUsartStr + 2 + 2 * 3)  = dist;
+// 		//*(pUsartStr + 2 + 2 * 4)  = Temp_val;
+// 		//Send_String_Len(pUsartStr, 11);
+// 		/*延时并扫描按键*/
+// 		for(i=0;i<15;i++)
+// 		{
+// 			KeyScanf();
+// 			DelayMs(10);
+// 		}
+// 	}
+// }

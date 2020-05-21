@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   53   2                      temp = ~temp;
   54   2                      tp = - temp*0.0625;     
   55   2                      //留两个小数点就*100，+0.5是四舍五入，因为C语言浮点数转换为整型的时候把小数点
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 2   
 
   56   2                      //后面的数自动去掉，不管是否大于0.5，而+0.5之后大于0.5的就是进1了，小于0.5的就
   57   2                      //算加上0.5，还是在小数点后面。
@@ -126,7 +126,7 @@ line level    source
  115          /*********************************************************/
  116          // 往单片机内部EEPROM写一个字节，从0x2000地址开始
  117          /*********************************************************/
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 3   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 3   
 
  118          void EEPROM_Write(unsigned int add,unsigned char ch)
  119          {
@@ -190,7 +190,7 @@ line level    source
  177          /*********************************************************/
  178          // 1602液晶写数据函数，dat就是要写入的数据
  179          /*********************************************************/
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 4   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 4   
 
  180          void LcdWriteData(uchar dat)
  181          {
@@ -254,7 +254,7 @@ line level    source
  239          
  240          
  241          
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 5   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 5   
 
  242          /*********************************************************/
  243          // 1602液晶显示内容初始化
@@ -318,7 +318,7 @@ line level    source
  301          
  302          /*********************************************************/
  303          // 计算传感器3测量到的距离
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 6   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 6   
 
  304          /*********************************************************/
  305          float GetDistance3(void)
@@ -382,7 +382,7 @@ line level    source
  363   2      
  364   2                      DelayMs(10);                                                                                    // 消除按键按下的抖动
  365   2                      while(!KeySet_P);                                                                       // 等待按键释放
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 7   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 7   
 
  366   2                      DelayMs(10);                                                                                    // 消除按键松开的抖动           
  367   2      
@@ -446,7 +446,7 @@ line level    source
  425   2                      Buzzer_P=0;
  426   2              }
  427   1              else
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 8   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 8   
 
  428   1              {
  429   2                      Buzzer_P=1;
@@ -510,7 +510,7 @@ line level    source
  487          void AlarmJudge4(float ss)
  488          {
  489   1              if(ss<gAlarm)           // LED灯判断
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 9   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 9   
 
  490   1              {
  491   2                      Led4_P=0;
@@ -574,7 +574,7 @@ line level    source
  549   1              
  550   1              
  551   1      }
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 10  
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 10  
 
  552          /*********************************************************/
  553          // 主函数
@@ -583,88 +583,178 @@ line level    source
  556          {
  557   1              uchar i;                                                                        // 循环变量
  558   1              float dist;                                                             // 保存测量结果
- 559   1              
- 560   1              LcdInit();                                                              // 液晶功能初始化
- 561   1              LcdShowInit();                                          // 液晶显示内容初始化
- 562   1              AlarmInit();                                                    // 报警值初始化
- 563   1              
- 564   1              TMOD |= 0x01;                                                   // 选择定时器0，并且确定是工作方式1（为了超声波模块测量距离计时用的）
- 565   1              UartInit();
- 566   1              Trig1_P=0;                                                              // 初始化触发引脚为低电平
- 567   1              Trig2_P=0;
- 568   1              Trig3_P=0;
- 569   1              Trig4_P=0;
- 570   1      
- 571   1              while(1)
- 572   1              {
- 573   2                      sprintf(temp_table, "temp:%04.1f\n",Temp_val);
- 574   2                      Send_String(temp_table);
- 575   2                      sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
- 576   2                      Send_String(temp_table);
- 577   2                      /*传感器1*/
- 578   2                      LcdGotoXY(0,6);                 // 光标定位
- 579   2                      dist = Calibration_Data(GetDistance1() * 10);
- 580   2                      LcdPrintNum(dist);                      // 显示传感器1测量到的距离
- 581   2                      AlarmJudge1(dist);                      // 判断传感器1的测量距离是否需要报警
- 582   2                      
- 583   2      
- 584   2                      /*延时并扫描按键*/
- 585   2                      for(i=0;i<15;i++)
- 586   2                      {
- 587   3                              KeyScanf();
- 588   3                              DelayMs(10);
- 589   3                      }
- 590   2                      
- 591   2                      /*传感器2*/
- 592   2                      LcdGotoXY(1,13);                // 光标定位
- 593   2                      dist = Calibration_Data(GetDistance2() * 10);
- 594   2                      LcdPrintNum(dist);                      // 显示传感器2测量到的距离
- 595   2                      AlarmJudge2(dist);                      // 判断传感器2的测量距离是否需要报警
- 596   2                      
- 597   2                      /*延时并扫描按键*/
- 598   2                      for(i=0;i<15;i++)
- 599   2                      {
- 600   3                              KeyScanf();
- 601   3                              DelayMs(10);
- 602   3                      }
- 603   2                      
- 604   2                      /*传感器3*/
- 605   2                      dist = Calibration_Data(GetDistance3() * 10);
- 606   2                      LcdGotoXY(1,7);                 // 光标定位
- 607   2                      LcdPrintNum(dist);                      // 显示传感器3测量到的距离
- 608   2                      AlarmJudge3(dist);                      // 判断传感器3的测量距离是否需要报警
- 609   2                      
- 610   2                      /*延时并扫描按键*/
- 611   2                      for(i=0;i<15;i++)
- 612   2                      {
- 613   3                              KeyScanf();
-C51 COMPILER V9.60.0.0   MAIN                                                              03/02/2020 13:20:54 PAGE 11  
+ 559   1              /*C51采用的是大端存储*/
+ 560   1              uchar UsartStr[11] = {0x55,0xaa};                               /*定义串口发送字符串*/
+ 561   1              uchar *pUsartStr = UsartStr;
+ 562   1              LcdInit();                                                              // 液晶功能初始化
+ 563   1              LcdShowInit();                                          // 液晶显示内容初始化
+ 564   1              AlarmInit();                                                    // 报警值初始化
+ 565   1              
+ 566   1              TMOD |= 0x01;                                                   // 选择定时器0，并且确定是工作方式1（为了超声波模块测量距离计时用的）
+ 567   1              UartInit();
+ 568   1              Trig1_P=0;                                                              // 初始化触发引脚为低电平
+ 569   1              Trig2_P=0;
+ 570   1              Trig3_P=0;
+ 571   1              Trig4_P=0;
+ 572   1                      sprintf(temp_table, "temp:%04.1f\n",Temp_val);
+ 573   1                      Send_String(temp_table);
+ 574   1              while(1)
+ 575   1              {
+ 576   2                      //sprintf(temp_table, "temp:%04.1f\n",Temp_val);
+ 577   2                      // Send_String(temp_table);
+ 578   2                      // sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
+ 579   2                      // Send_String(temp_table);
+ 580   2                      /*传感器1*/
+ 581   2                      LcdGotoXY(0,6);                 // 光标定位
+ 582   2                      dist = Calibration_Data(GetDistance1() * 10);
+ 583   2                      LcdPrintNum(dist);                      // 显示传感器1测量到的距离
+ 584   2                      AlarmJudge1(dist);                      // 判断传感器1的测量距离是否需要报警
+ 585   2                      *(uint *)(pUsartStr + 2) = dist;
+ 586   2      
+ 587   2                      /*延时并扫描按键*/
+ 588   2                      for(i=0;i<15;i++)
+ 589   2                      {
+ 590   3                              KeyScanf();
+ 591   3                              DelayMs(10);
+ 592   3                      }
+ 593   2                      
+ 594   2                      /*传感器2*/
+ 595   2                      LcdGotoXY(1,13);                // 光标定位
+ 596   2                      dist = Calibration_Data(GetDistance2() * 10);
+ 597   2                      LcdPrintNum(dist);                      // 显示传感器2测量到的距离
+ 598   2                      AlarmJudge2(dist);                      // 判断传感器2的测量距离是否需要报警
+ 599   2                      *(uint *)(pUsartStr + 2 + 2 * 1) = dist;
+ 600   2                      /*延时并扫描按键*/
+ 601   2                      for(i=0;i<15;i++)
+ 602   2                      {
+ 603   3                              KeyScanf();
+ 604   3                              DelayMs(10);
+ 605   3                      }
+ 606   2                      
+ 607   2                      /*传感器3*/
+ 608   2                      dist = Calibration_Data(GetDistance3() * 10);
+ 609   2                      LcdGotoXY(1,7);                 // 光标定位
+ 610   2                      LcdPrintNum(dist);                      // 显示传感器3测量到的距离
+ 611   2                      AlarmJudge3(dist);                      // 判断传感器3的测量距离是否需要报警
+ 612   2                      *(uint *)(pUsartStr + 2 + 2 * 2) = dist;
+ 613   2                      /*延时并扫描按键*/
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 11  
 
- 614   3                              DelayMs(10);
- 615   3                      }
- 616   2                      
- 617   2                      /*传感器4*/
- 618   2                      dist = Calibration_Data(GetDistance4() * 10);
- 619   2                      LcdGotoXY(1,1);                 // 光标定位
- 620   2                      LcdPrintNum(dist);                      // 显示传感器4测量到的距离
- 621   2                      AlarmJudge4(dist);                      // 判断传感器4的测量距离是否需要报警
- 622   2                      
- 623   2                      /*延时并扫描按键*/
- 624   2                      for(i=0;i<15;i++)
- 625   2                      {
- 626   3                              KeyScanf();
- 627   3                              DelayMs(10);
- 628   3                      }
- 629   2              }
- 630   1      }
+ 614   2                      for(i=0;i<15;i++)
+ 615   2                      {
+ 616   3                              KeyScanf();
+ 617   3                              DelayMs(10);
+ 618   3                      }
+ 619   2                      
+ 620   2                      /*传感器4*/
+ 621   2                      dist = Calibration_Data(GetDistance4() * 10);
+ 622   2                      LcdGotoXY(1,1);                 // 光标定位
+ 623   2                      LcdPrintNum(dist);                      // 显示传感器4测量到的距离
+ 624   2                      AlarmJudge4(dist);                      // 判断传感器4的测量距离是否需要报警
+ 625   2                      *(uint *)(pUsartStr + 2 + 2 * 3)  = dist;
+ 626   2                      *(pUsartStr + 2 + 2 * 4)  = Temp_val;
+ 627   2                      Send_String_Len(pUsartStr, 11);
+ 628   2                      /*延时并扫描按键*/
+ 629   2                      for(i=0;i<15;i++)
+ 630   2                      {
+ 631   3                              KeyScanf();
+ 632   3                              DelayMs(10);
+ 633   3                      }
+ 634   2              }
+ 635   1       }
+ 636          // /*********************************************************/
+ 637          // // 主函数
+ 638          // /*********************************************************/
+ 639          // void main()
+ 640          // {
+ 641          //      uchar i;                                                                        // 循环变量
+ 642          //      float dist;                                                             // 保存测量结果
+ 643          //      /*C51采用的是大端存储*/
+ 644          //      //uchar UsartStr[11] = {0x55,0xaa};                             /*定义串口发送字符串*/
+ 645          //      //uchar *pUsartStr = UsartStr;
+ 646          //      LcdInit();                                                              // 液晶功能初始化
+ 647          //      LcdShowInit();                                          // 液晶显示内容初始化
+ 648          //      AlarmInit();                                                    // 报警值初始化
+ 649                  
+ 650          //      TMOD |= 0x01;                                                   // 选择定时器0，并且确定是工作方式1（为了超声波模块测量距离计时用的）
+ 651          //      UartInit();
+ 652          //      Trig1_P=0;                                                              // 初始化触发引脚为低电平
+ 653          //      Trig2_P=0;
+ 654          //      Trig3_P=0;
+ 655          //      Trig4_P=0;
+ 656          
+ 657          //      while(1)
+ 658          //      {
+ 659          //              //sprintf(temp_table, "temp:%04.1f\n",Temp_val);
+ 660          //              // Send_String(temp_table);
+ 661          //              // sprintf(temp_table, "voice:%04.3f\n",CLAC_SPEED(Audio_speed));
+ 662          //              // Send_String(temp_table);
+ 663          //              /*传感器1*/
+ 664          //              LcdGotoXY(0,6);                 // 光标定位
+ 665          //              dist = Calibration_Data(GetDistance1() * 10);
+ 666          //              LcdPrintNum(dist);                      // 显示传感器1测量到的距离
+ 667          //              AlarmJudge1(dist);                      // 判断传感器1的测量距离是否需要报警
+ 668          //              //*(uint *)(pUsartStr + 2) = dist;
+ 669          
+ 670          //              /*延时并扫描按键*/
+ 671          //              for(i=0;i<15;i++)
+ 672          //              {
+ 673          //                      KeyScanf();
+ 674          //                      DelayMs(10);
+ 675          //              }
+C51 COMPILER V9.60.0.0   MAIN                                                              05/21/2020 20:16:01 PAGE 12  
+
+ 676                          
+ 677          //              /*传感器2*/
+ 678          //              LcdGotoXY(1,13);                // 光标定位
+ 679          //              dist = Calibration_Data(GetDistance2() * 10);
+ 680          //              LcdPrintNum(dist);                      // 显示传感器2测量到的距离
+ 681          //              AlarmJudge2(dist);                      // 判断传感器2的测量距离是否需要报警
+ 682          //              //*(uint *)(pUsartStr + 2 + 2 * 1) = dist;
+ 683          //              /*延时并扫描按键*/
+ 684          //              for(i=0;i<15;i++)
+ 685          //              {
+ 686          //                      KeyScanf();
+ 687          //                      DelayMs(10);
+ 688          //              }
+ 689                          
+ 690          //              /*传感器3*/
+ 691          //              dist = Calibration_Data(GetDistance3() * 10);
+ 692          //              LcdGotoXY(1,7);                 // 光标定位
+ 693          //              LcdPrintNum(dist);                      // 显示传感器3测量到的距离
+ 694          //              AlarmJudge3(dist);                      // 判断传感器3的测量距离是否需要报警
+ 695          //              //*(uint *)(pUsartStr + 2 + 2 * 2) = dist;
+ 696          //              /*延时并扫描按键*/
+ 697          //              for(i=0;i<15;i++)
+ 698          //              {
+ 699          //                      KeyScanf();
+ 700          //                      DelayMs(10);
+ 701          //              }
+ 702                          
+ 703          //              /*传感器4*/
+ 704          //              dist = Calibration_Data(GetDistance4() * 10);
+ 705          //              LcdGotoXY(1,1);                 // 光标定位
+ 706          //              LcdPrintNum(dist);                      // 显示传感器4测量到的距离
+ 707          //              AlarmJudge4(dist);                      // 判断传感器4的测量距离是否需要报警
+ 708          //              //*(uint *)(pUsartStr + 2 + 2 * 3)  = dist;
+ 709          //              //*(pUsartStr + 2 + 2 * 4)  = Temp_val;
+ 710          //              //Send_String_Len(pUsartStr, 11);
+ 711          //              /*延时并扫描按键*/
+ 712          //              for(i=0;i<15;i++)
+ 713          //              {
+ 714          //                      KeyScanf();
+ 715          //                      DelayMs(10);
+ 716          //              }
+ 717          //      }
+ 718          // }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2130    ----
-   CONSTANT SIZE    =    127    ----
+   CODE SIZE        =   2237    ----
+   CONSTANT SIZE    =    124    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     30      36
+   DATA SIZE        =     30      50
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
